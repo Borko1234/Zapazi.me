@@ -1,0 +1,53 @@
+Project SportReserve {
+  database_type: "PostgreSQL"
+}
+
+Table facility {
+  ID serial [pk]
+  NAME varchar(50)
+  MOBILE varchar(15)
+  ADDRESS text
+}
+
+Table SCHEDULE {
+  ID serial [pk]
+  OPEN time
+  CLOSE time
+}
+
+Table facility_SCHEDULE {
+  facility_ID int [ref: > facility.ID]
+  SCHEDULE_ID int [ref: > SCHEDULE.ID]
+}
+
+Table USERS {
+  ID serial [pk]
+  NAME varchar(100)
+  EMAIL varchar(100) [unique]
+  PASSWORD varchar(255)
+  PHONE varchar(15)
+}
+
+Table USERS_ROLES {
+  USER_ID int [ref: > USERS.ID]
+  ROLE varchar(10) [default: 'user']
+}
+
+Table RESERVATIONS {
+  ID serial [pk]
+  facility_ID int [ref: > facility.ID]
+  USER_ID int [ref: > USERS.ID]
+  DATE timestamp
+  DURATION int
+  DESCRIPTION text
+}
+
+Table PRICING {
+  ID serial [pk]
+  facility_ID int [ref: > facility.ID]
+  PRICE_PER_HOUR decimal(10,2)
+}
+
+
+
+
