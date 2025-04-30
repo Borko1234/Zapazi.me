@@ -1,3 +1,5 @@
+//tva moje da go butnete v dbdiagram
+
 Project SportReserve {
   database_type: "PostgreSQL"
 }
