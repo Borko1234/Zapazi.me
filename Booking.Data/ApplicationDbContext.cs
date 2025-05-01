@@ -24,7 +24,11 @@ namespace Booking.Data
             // FacilitySchedules
 
             modelBuilder.Entity<FacilitySchedule>()
-                .HasKey(fs => new { fs.FacilityId, fs.ScheduleId });
+                .HasKey(fs => new { fs.Id });
+
+            modelBuilder.Entity<FacilitySchedule>()
+                .HasIndex(fs => new { fs.FacilityId, fs.ScheduleId })
+                .IsUnique();
 
             modelBuilder.Entity<FacilitySchedule>()
                 .HasOne(fs => fs.Facility)
@@ -39,7 +43,10 @@ namespace Booking.Data
             // Reservations
             
             modelBuilder.Entity<Reservation>()
-                .HasKey(r => new { r.FacilityId, r.UserId });
+                .HasKey(r => new { r.Id });
+
+            modelBuilder.Entity<Reservation>()
+                .HasIndex(r => new { r.FacilityId, r.UserId });
 
             modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.Facility)

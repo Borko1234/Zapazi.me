@@ -1,0 +1,165 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Booking.Data;
+using Booking.Data.Entities;
+
+namespace Booking.Controllers
+{
+    public class PricingsController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+
+        public PricingsController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: Pricings
+        public async Task<IActionResult> Index()
+        {
+            var applicationDbContext = _context.Pricings.Include(p => p.Facility);
+            return View(await applicationDbContext.ToListAsync());
+        }
+
+        // GET: Pricings/Details/5
+        public async Task<IActionResult> Details(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var pricing = await _context.Pricings
+                .Include(p => p.Facility)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (pricing == null)
+            {
+                return NotFound();
+            }
+
+            return View(pricing);
+        }
+
+        // GET: Pricings/Create
+        public IActionResult Create()
+        {
+            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Address");
+            return View();
+        }
+
+        // POST: Pricings/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("FacilityId,PricePerHour,Id")] Pricing pricing)
+        {
+            if (ModelState.IsValid)
+            {
+                pricing.Id = Guid.NewGuid();
+                _context.Add(pricing);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Address", pricing.FacilityId);
+            return View(pricing);
+        }
+
+        // GET: Pricings/Edit/5
+        public async Task<IActionResult> Edit(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var pricing = await _context.Pricings.FindAsync(id);
+            if (pricing == null)
+            {
+                return NotFound();
+            }
+            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Address", pricing.FacilityId);
+            return View(pricing);
+        }
+
+        // POST: Pricings/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Guid id, [Bind("FacilityId,PricePerHour,Id")] Pricing pricing)
+        {
+            if (id != pricing.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(pricing);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!PricingExists(pricing.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Address", pricing.FacilityId);
+            return View(pricing);
+        }
+
+        // GET: Pricings/Delete/5
+        public async Task<IActionResult> Delete(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var pricing = await _context.Pricings
+                .Include(p => p.Facility)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (pricing == null)
+            {
+                return NotFound();
+            }
+
+            return View(pricing);
+        }
+
+        // POST: Pricings/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        {
+            var pricing = await _context.Pricings.FindAsync(id);
+            if (pricing != null)
+            {
+                _context.Pricings.Remove(pricing);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool PricingExists(Guid id)
+        {
+            return _context.Pricings.Any(e => e.Id == id);
+        }
+    }
+}
