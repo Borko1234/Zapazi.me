@@ -1,4 +1,6 @@
 using Booking.Data;
+using Booking.Data.Identity.Roles;
+using Booking.Data.Identity.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,8 +18,15 @@ namespace Booking
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services
+                .AddIdentity<BookingUser, BookingRole>(options => {
+                    options.SignIn.RequireConfirmedAccount = true;
+                })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            builder.Services.AddRazorPages();
+
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();

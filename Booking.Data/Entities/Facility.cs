@@ -18,5 +18,9 @@ namespace Booking.Data.Entities
         public string Mobile { get; set; }
         [Required]
         public string Address { get; set; }
+
+        public virtual ICollection<FacilitySchedule>? FacilitySchedules { get; set; }
+        public virtual ICollection<Pricing>? Pricings { get; set; }
+        public virtual ICollection<Reservation>? Reservations { get; set; }
     }
 }

@@ -10,15 +10,14 @@ using System.Threading.Tasks;
 
 namespace Booking.Data.Entities
 {
-    public class Reservations : BaseEntity
+    public class Reservation : BaseEntity
     {
-        [ForeignKey(nameof(Facility))]
-        public virtual Guid FacilityId { get; set; }
-        public virtual Facility? Facility { get; set; }
+        public Guid FacilityId { get; set; }
+        public Facility? Facility { get; set; }
 
-        [ForeignKey(nameof(User))]
-        public virtual Guid UserId { get; set; }
-        public virtual BookingUser? User { get; set; }
+        public string UserId { get; set; }
+        public BookingUser? User { get; set; }
+
 
         [Required]
         public DateTime Date { get; set; }

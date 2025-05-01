@@ -12,8 +12,8 @@ namespace Booking.Data.Entities
     public class Pricing : BaseEntity
     {
         [ForeignKey(nameof(Facility))]
-        public virtual Guid FacilityId { get; set; }
-        public virtual Facility? Facility { get; set; }
+        public Guid FacilityId { get; set; }
+        public Facility? Facility { get; set; }
 
         public decimal PricePerHour { get; set; }
     }

@@ -14,5 +14,7 @@ namespace Booking.Data.Entities
         public TimeOnly Open { get; set; }
         [Required]
         public TimeOnly Close { get; set; }
+
+        public virtual ICollection<FacilitySchedule>? FacilitySchedules { get; set; }
     }
 }
