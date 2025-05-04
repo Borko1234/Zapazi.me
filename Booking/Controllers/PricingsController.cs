@@ -48,7 +48,7 @@ namespace Booking.Controllers
         // GET: Pricings/Create
         public IActionResult Create()
         {
-            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Address");
+            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name");
             return View();
         }
 
@@ -66,7 +66,7 @@ namespace Booking.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Address", pricing.FacilityId);
+            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", pricing.FacilityId);
             return View(pricing);
         }
 
@@ -83,7 +83,7 @@ namespace Booking.Controllers
             {
                 return NotFound();
             }
-            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Address", pricing.FacilityId);
+            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", pricing.FacilityId);
             return View(pricing);
         }
 
@@ -119,7 +119,7 @@ namespace Booking.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Address", pricing.FacilityId);
+            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", pricing.FacilityId);
             return View(pricing);
         }
 

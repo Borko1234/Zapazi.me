@@ -44,7 +44,7 @@ namespace Booking.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Facilities");
+                    b.ToTable("Facilities", (string)null);
                 });
 
             modelBuilder.Entity("Booking.Data.Entities.FacilitySchedule", b =>
@@ -66,7 +66,7 @@ namespace Booking.Data.Migrations
                     b.HasIndex("FacilityId", "ScheduleId")
                         .IsUnique();
 
-                    b.ToTable("FacilitySchedules");
+                    b.ToTable("FacilitySchedules", (string)null);
                 });
 
             modelBuilder.Entity("Booking.Data.Entities.Pricing", b =>
@@ -85,7 +85,7 @@ namespace Booking.Data.Migrations
 
                     b.HasIndex("FacilityId");
 
-                    b.ToTable("Pricings");
+                    b.ToTable("Pricings", (string)null);
                 });
 
             modelBuilder.Entity("Booking.Data.Entities.Reservation", b =>
@@ -117,7 +117,7 @@ namespace Booking.Data.Migrations
 
                     b.HasIndex("FacilityId", "UserId");
 
-                    b.ToTable("Reservations");
+                    b.ToTable("Reservations", (string)null);
                 });
 
             modelBuilder.Entity("Booking.Data.Entities.Schedule", b =>
@@ -134,7 +134,7 @@ namespace Booking.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Schedules");
+                    b.ToTable("Schedules", (string)null);
                 });
 
             modelBuilder.Entity("Booking.Data.Identity.Roles.BookingRole", b =>

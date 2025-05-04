@@ -37,7 +37,7 @@ namespace Booking.Controllers
             var facilitySchedule = await _context.FacilitySchedules
                 .Include(f => f.Facility)
                 .Include(f => f.Schedule)
-                .FirstOrDefaultAsync(m => m.FacilityId == id);
+                .FirstOrDefaultAsync(f => f.Id == id);
             if (facilitySchedule == null)
             {
                 return NotFound();
@@ -170,7 +170,7 @@ namespace Booking.Controllers
             var facilitySchedule = await _context.FacilitySchedules
                 .Include(f => f.Facility)
                 .Include(f => f.Schedule)
-                .FirstOrDefaultAsync(m => m.FacilityId == id);
+                .FirstOrDefaultAsync(f => f.Id == id);
             if (facilitySchedule == null)
             {
                 return NotFound();
@@ -196,7 +196,7 @@ namespace Booking.Controllers
 
         private bool FacilityScheduleExists(Guid id)
         {
-            return _context.FacilitySchedules.Any(e => e.FacilityId == id);
+            return _context.FacilitySchedules.Any(e => e.Id == id);
         }
     }
 }

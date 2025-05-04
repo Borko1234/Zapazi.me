@@ -1,7 +1,9 @@
 using Booking.Data;
 using Booking.Data.Identity.Roles;
 using Booking.Data.Identity.Users;
+using Booking.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Booking
@@ -18,6 +20,8 @@ namespace Booking
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+            builder.Services.AddTransient<IEmailSender, EmailSenderService>();
+
             builder.Services
                 .AddIdentity<BookingUser, BookingRole>(options => {
                     options.SignIn.RequireConfirmedAccount = true;
@@ -28,6 +32,8 @@ namespace Booking
             builder.Services.AddRazorPages();
 
             builder.Services.AddControllersWithViews();
+
+
 
             var app = builder.Build();
 
@@ -55,6 +61,8 @@ namespace Booking
                 .WithStaticAssets();
             app.MapRazorPages()
                .WithStaticAssets();
+
+            app.UseRequestLocalization("en-UK");
 
             app.Run();
         }

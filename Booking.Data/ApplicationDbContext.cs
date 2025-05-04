@@ -46,9 +46,6 @@ namespace Booking.Data
                 .HasKey(r => new { r.Id });
 
             modelBuilder.Entity<Reservation>()
-                .HasIndex(r => new { r.FacilityId, r.UserId });
-
-            modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.Facility)
                 .WithMany(f => f.Reservations)
                 .HasForeignKey(r => r.FacilityId);

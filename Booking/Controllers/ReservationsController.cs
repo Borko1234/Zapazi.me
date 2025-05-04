@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Booking.Data;
 using Booking.Data.Entities;
+using Booking.Data.Identity.Users;
+using Microsoft.AspNetCore.Identity;
 
 namespace Booking.Controllers
 {
     public class ReservationsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<BookingUser> _userManager;
 
-        public ReservationsController(ApplicationDbContext context)
+        public ReservationsController(ApplicationDbContext context,
+            UserManager<BookingUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Reservations
@@ -37,7 +42,7 @@ namespace Booking.Controllers
             var reservation = await _context.Reservations
                 .Include(r => r.Facility)
                 .Include(r => r.User)
-                .FirstOrDefaultAsync(m => m.FacilityId == id);
+                .FirstOrDefaultAsync(r => r.Id == id);
             if (reservation == null)
             {
                 return NotFound();
@@ -49,8 +54,8 @@ namespace Booking.Controllers
         // GET: Reservations/Create
         public IActionResult Create()
         {
-            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Address");
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name");
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
             return View();
         }
 
@@ -59,17 +64,21 @@ namespace Booking.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FacilityId,UserId,Date,Duration,Description,Id")] Reservation reservation)
+        public async Task<IActionResult> Create([Bind("FacilityId,Date,Duration,Description")] Reservation reservation)
         {
+            ModelState.Remove("UserId");
+
             if (ModelState.IsValid)
             {
-                reservation.FacilityId = Guid.NewGuid();
+                reservation.Id = Guid.NewGuid();
+                var user = await _userManager.GetUserAsync(User);
+                reservation.UserId = user.Id;
+
                 _context.Add(reservation);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Address", reservation.FacilityId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", reservation.UserId);
+            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", reservation.FacilityId);
             return View(reservation);
         }
 
@@ -86,8 +95,8 @@ namespace Booking.Controllers
             {
                 return NotFound();
             }
-            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Address", reservation.FacilityId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", reservation.UserId);
+            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", reservation.FacilityId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", reservation.UserId);
             return View(reservation);
         }
 
@@ -98,7 +107,7 @@ namespace Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("FacilityId,UserId,Date,Duration,Description,Id")] Reservation reservation)
         {
-            if (id != reservation.FacilityId)
+            if (id != reservation.Id)
             {
                 return NotFound();
             }
@@ -112,7 +121,7 @@ namespace Booking.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ReservationExists(reservation.FacilityId))
+                    if (!ReservationExists(reservation.Id))
                     {
                         return NotFound();
                     }
@@ -123,8 +132,8 @@ namespace Booking.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Address", reservation.FacilityId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", reservation.UserId);
+            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", reservation.FacilityId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", reservation.UserId);
             return View(reservation);
         }
 
@@ -139,7 +148,7 @@ namespace Booking.Controllers
             var reservation = await _context.Reservations
                 .Include(r => r.Facility)
                 .Include(r => r.User)
-                .FirstOrDefaultAsync(m => m.FacilityId == id);
+                .FirstOrDefaultAsync(r => r.Id == id);
             if (reservation == null)
             {
                 return NotFound();
@@ -165,7 +174,7 @@ namespace Booking.Controllers
 
         private bool ReservationExists(Guid id)
         {
-            return _context.Reservations.Any(e => e.FacilityId == id);
+            return _context.Reservations.Any(e => e.Id == id);
         }
     }
 }
