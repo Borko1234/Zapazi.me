@@ -7,14 +7,21 @@
 
 <h1>Index</h1>
 
-<div class="d-flex justify-content-start mt-4">
-    <a href="@Url.Action("Create", "Facilities")" class="btn btn-primary btn-lg" style="width: 200px; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
-        <i class="fas fa-wallet fa-2x"></i> <!-- Font Awesome icon -->
+<div class="d-flex justify-content-start align-items-center mt-4 gap-3">
+    <!-- Create Button -->
+    <a href="@Url.Action("Create", "Facilities")" class="btn btn-primary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
+        <i class="fas fa-wallet"></i> <!-- Font Awesome icon -->
         <span>Create</span>
     </a>
+
+    <!-- Search Bar -->
+    <form asp-action="DetailsBySearch" method="get" class="d-flex">
+        <input type="text" name="searchTerm" class="form-control" placeholder="Enter Facility Name..." style="width: 300px;" />
+        <button type="submit" class="btn btn-secondary ms-2">Search</button>
+    </form>
 </div>
 
-<table class="table">
+<table class="table mt-4">
     <thead>
         <tr>
             <th>
@@ -26,7 +33,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Address)
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -40,11 +46,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }
