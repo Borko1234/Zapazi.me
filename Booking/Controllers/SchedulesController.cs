@@ -20,9 +20,19 @@ namespace Booking.Controllers
         }
 
         // GET: Schedules
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchTerm)
         {
-            return View(await _context.Schedules.ToListAsync());
+            var schedules = from s in _context.Schedules
+                            select s;
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                schedules = schedules.Where(s => 
+                    s.Open.ToString().Contains(searchTerm) || 
+                    s.Close.ToString().Contains(searchTerm));
+            }
+
+            return View(await schedules.ToListAsync());
         }
 
         // GET: Schedules/Details/5
