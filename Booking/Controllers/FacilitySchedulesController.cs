@@ -37,7 +37,7 @@ namespace Booking.Controllers
             var facilitySchedule = await _context.FacilitySchedules
                 .Include(f => f.Facility)
                 .Include(f => f.Schedule)
-                .FirstOrDefaultAsync(m => m.FacilityId == id);
+                .FirstOrDefaultAsync(f => f.Id == id);
             if (facilitySchedule == null)
             {
                 return NotFound();
@@ -75,8 +75,16 @@ namespace Booking.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Address", facilitySchedule.FacilityId);
-            ViewData["ScheduleId"] = new SelectList(_context.Schedules, "Id", "Id", facilitySchedule.ScheduleId);
+            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", facilitySchedule.FacilityId);
+            ViewData["ScheduleId"] = new SelectList(
+                _context.Schedules.Select(s => new {
+                s.Id,
+                Display = s.Open.ToString("HH:mm") + " - " + s.Close.ToString("HH:mm")
+                }),
+                "Id",
+                "Display",
+                facilitySchedule.ScheduleId);
+
             return View(facilitySchedule);
         }
 
@@ -93,8 +101,16 @@ namespace Booking.Controllers
             {
                 return NotFound();
             }
-            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Address", facilitySchedule.FacilityId);
-            ViewData["ScheduleId"] = new SelectList(_context.Schedules, "Id", "Id", facilitySchedule.ScheduleId);
+            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", facilitySchedule.FacilityId);
+            ViewData["ScheduleId"] = new SelectList(
+                _context.Schedules.Select(s => new {
+                    s.Id,
+                    Display = s.Open.ToString("HH:mm") + " - " + s.Close.ToString("HH:mm")
+                }),
+                "Id",
+                "Display",
+                facilitySchedule.ScheduleId);
+
             return View(facilitySchedule);
         }
 
@@ -103,7 +119,7 @@ namespace Booking.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid Id, [Bind("FacilityId,ScheduleId")] FacilitySchedule facilitySchedule)
+        public async Task<IActionResult> Edit(Guid Id, [Bind("Id, FacilityId,ScheduleId")] FacilitySchedule facilitySchedule)
         {
             if (Id != facilitySchedule.Id)
             {
@@ -131,7 +147,15 @@ namespace Booking.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", facilitySchedule.FacilityId);
-            ViewData["ScheduleId"] = new SelectList(_context.Schedules, "Id", "Id", facilitySchedule.ScheduleId);
+            ViewData["ScheduleId"] = new SelectList(
+                _context.Schedules.Select(s => new {
+                    s.Id,
+                    Display = s.Open.ToString("HH:mm") + " - " + s.Close.ToString("HH:mm")
+                }),
+                "Id",
+                "Display",
+                facilitySchedule.ScheduleId);
+
             return View(facilitySchedule);
         }
 
@@ -146,7 +170,7 @@ namespace Booking.Controllers
             var facilitySchedule = await _context.FacilitySchedules
                 .Include(f => f.Facility)
                 .Include(f => f.Schedule)
-                .FirstOrDefaultAsync(m => m.FacilityId == id);
+                .FirstOrDefaultAsync(f => f.Id == id);
             if (facilitySchedule == null)
             {
                 return NotFound();
@@ -172,7 +196,7 @@ namespace Booking.Controllers
 
         private bool FacilityScheduleExists(Guid id)
         {
-            return _context.FacilitySchedules.Any(e => e.FacilityId == id);
+            return _context.FacilitySchedules.Any(e => e.Id == id);
         }
     }
 }
