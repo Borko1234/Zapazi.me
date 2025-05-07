@@ -7,9 +7,13 @@
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<div class="d-flex justify-content-start mt-4">
+    <a href="@Url.Action("Create", "Facilities")" class="btn btn-primary btn-lg" style="width: 200px; height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
+        <i class="fas fa-wallet fa-2x"></i> <!-- Font Awesome icon -->
+        <span>Create</span>
+    </a>
+</div>
+
 <table class="table">
     <thead>
         <tr>
