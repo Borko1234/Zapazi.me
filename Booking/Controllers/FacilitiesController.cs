@@ -20,9 +20,20 @@ namespace Booking.Controllers
         }
 
         // GET: Facilities
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchTerm)
         {
-            return View(await _context.Facilities.ToListAsync());
+            // Retrieve all facilities
+            var facilities = from f in _context.Facilities
+                             select f;
+
+            // Filter facilities if a search term is provided
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                facilities = facilities.Where(f => f.Name.Contains(searchTerm));
+            }
+
+            // Return the filtered list to the view
+            return View(await facilities.ToListAsync());
         }
 
         // GET: Facilities/Details by ID

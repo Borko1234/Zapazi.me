@@ -14,7 +14,7 @@
     </a>
 
     <!-- Search Bar -->
-    <form asp-action="DetailsBySearch" method="get" class="d-flex">
+    <form asp-action="Index" method="get" class="d-flex">
         <input type="text" name="searchTerm" class="form-control" placeholder="Enter Facility Name..." style="width: 300px;" />
         <button type="submit" class="btn btn-secondary ms-2">Search</button>
     </form>
@@ -38,7 +38,10 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                <!-- Make Name Clickable with Custom Styles -->
+                <a href="@Url.Action("Details", "Facilities", new { id = item.Id })" class="link-style">
+                    @Html.DisplayFor(modelItem => item.Name)
+                </a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Mobile)
