@@ -7,10 +7,20 @@
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<div class="d-flex justify-content-start align-items-center mt-4 gap-3">
+    <!-- Create Button -->
+    <a href="@Url.Action("Create", "FacilitySchedules")" class="btn btn-primary d-flex justify-content-center align-items-center" style="height: 38px; padding: 0 20px; border-radius: 5px;">
+        Create
+    </a>
+
+    <!-- Search Bar -->
+    <form asp-action="Index" method="get" class="d-flex">
+        <input type="text" name="searchTerm" class="form-control" placeholder="Enter Facility or Schedule..." style="width: 300px;" />
+        <button type="submit" class="btn btn-secondary ms-2">Search</button>
+    </form>
+</div>
+
+<table class="table mt-4">
     <thead>
         <tr>
             <th>

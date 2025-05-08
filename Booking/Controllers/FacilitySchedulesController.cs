@@ -20,10 +20,22 @@ namespace Booking.Controllers
         }
 
         // GET: FacilitySchedules
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchTerm)
         {
-            var applicationDbContext = _context.FacilitySchedules.Include(f => f.Facility).Include(f => f.Schedule);
-            return View(await applicationDbContext.ToListAsync());
+            var facilitySchedules = from fs in _context.FacilitySchedules
+                                    .Include(fs => fs.Facility)
+                                    .Include(fs => fs.Schedule)
+                                    select fs;
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                facilitySchedules = facilitySchedules.Where(fs =>
+                    fs.Facility.Name.Contains(searchTerm) ||
+                    fs.Schedule.Open.ToString().Contains(searchTerm) ||
+                    fs.Schedule.Close.ToString().Contains(searchTerm));
+            }
+
+            return View(await facilitySchedules.ToListAsync());
         }
 
         // GET: FacilitySchedules/Details/5
