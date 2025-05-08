@@ -11,28 +11,76 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" method="post" id="CreateForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="FacilityId" class="control-label"></label>
-                <select asp-for="FacilityId" class ="form-control" asp-items="ViewBag.FacilityId"></select>
+                <label asp-for="FacilityId" class="control-label">Facility</label>
+                <input type="text" id="facilitySearch" class="form-control" placeholder="Search Facility..." autocomplete="off" />
+                <ul id="facilityList" class="list-group mt-2" style="display: none; max-height: 150px; overflow-y: auto;">
+                    @foreach (var facility in ViewBag.Facilities as List<SelectListItem>)
+                    {
+                        <li class="list-group-item facility-item" data-id="@facility.Value">@facility.Text</li>
+                    }
+                </ul>
+                <input type="hidden" asp-for="FacilityId" />
             </div>
             <div class="form-group">
-                <label asp-for="PricePerHour" class="control-label"></label>
+                <label asp-for="PricePerHour" class="control-label">Price Per Hour</label>
                 <input asp-for="PricePerHour" class="form-control" />
                 <span asp-validation-for="PricePerHour" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="d-flex justify-content-start gap-3 mt-4">
+    <!-- Create Button -->
+    <button type="submit" form="CreateForm" class="btn btn-primary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
+        <span>Create</span>
+    </button>
+
+    <!-- Back to List Button -->
+    <a href="@Url.Action("Index", "Pricings")" class="btn btn-secondary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
+        <span>Back to List</span>
+    </a>
 </div>
 
 @section Scripts {
+    <script>
+        const facilitySearch = document.getElementById('facilitySearch');
+        const facilityList = document.getElementById('facilityList');
+        const facilityIdInput = document.querySelector('input[asp-for="FacilityId"]');
+
+        facilitySearch.addEventListener('input', function () {
+            const searchValue = this.value.toLowerCase();
+            const items = facilityList.querySelectorAll('.facility-item');
+            let hasVisibleItems = false;
+
+            items.forEach(item => {
+                if (item.textContent.toLowerCase().includes(searchValue)) {
+                    item.style.display = 'block';
+                    hasVisibleItems = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            facilityList.style.display = hasVisibleItems ? 'block' : 'none';
+        });
+
+        facilityList.addEventListener('click', function (e) {
+            if (e.target.classList.contains('facility-item')) {
+                facilitySearch.value = e.target.textContent;
+                facilityIdInput.value = e.target.getAttribute('data-id');
+                facilityList.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!facilitySearch.contains(e.target) && !facilityList.contains(e.target)) {
+                facilityList.style.display = 'none';
+            }
+        });
+    </script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
