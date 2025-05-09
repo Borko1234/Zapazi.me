@@ -2,52 +2,85 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to Zapazi.me</h1>
-    <p class="lead">Manage your bookings and schedules effortlessly.</p>
-</div>
-
-<div class="container mt-5 d-flex justify-content-end">
-    <!-- Dynamic Calendar -->
-    <div class="calendar-container">
-        <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
-            <button id="prevMonth" class="btn btn-primary btn-sm">&lt;</button>
-            <h5 id="calendarMonth" class="mb-0"></h5>
-            <button id="nextMonth" class="btn btn-primary btn-sm">&gt;</button>
-        </div>
-        <table class="table table-bordered text-center">
-            <thead>
-                <tr>
-                    <th>Sun</th>
-                    <th>Mon</th>
-                    <th>Tue</th>
-                    <th>Wed</th>
-                    <th>Thu</th>
-                    <th>Fri</th>
-                    <th>Sat</th>
-                </tr>
-            </thead>
-            <tbody id="calendarBody">
-                <!-- Calendar days will be dynamically generated here -->
-            </tbody>
-        </table>
+<!-- Hero Section -->
+<div class="hero-section text-center text-white d-flex align-items-center justify-content-center">
+    <div>
+        <h1 class="display-4">Welcome to Zapazi.me</h1>
+        <p class="lead">Manage your bookings and schedules effortlessly.</p>
     </div>
 </div>
 
+<!-- Main Content -->
+<div class="container mt-5">
+    <div class="row">
+        <!-- Left Section -->
+        <div class="col-md-8">
+            <h2>About Us</h2>
+            <p>
+                Zapazi.me is your ultimate platform for managing bookings and schedules. Whether you're running a business or organizing personal events, our tools make it easy to stay on top of your plans.
+            </p>
+            <p>
+                Explore our features, including dynamic calendars, pricing management, and more. Start today and experience seamless scheduling!
+            </p>
+        </div>
+
+        <!-- Right Section: Calendar -->
+        <div class="col-md-4">
+            <div class="calendar-container">
+                <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
+                    <button id="prevMonth" class="btn btn-primary btn-sm">&lt;</button>
+                    <h5 id="calendarMonth" class="mb-0"></h5>
+                    <button id="nextMonth" class="btn btn-primary btn-sm">&gt;</button>
+                </div>
+                <table class="table table-bordered text-center">
+                    <thead>
+                        <tr>
+                            <th>Sun</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                        </tr>
+                    </thead>
+                    <tbody id="calendarBody">
+                        <!-- Calendar days will be dynamically generated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+@* <footer class="text-center text-white py-4" style="background-color: #007bff;">
+    <p>&copy; 2025 Zapazi.me. All rights reserved.</p>
+</footer> *@
+
 @section Styles {
     <style>
+        .hero-section {
+            width: 100%; /* Full width */
+            height: 60vh; /* Adjust as needed */
+            background: linear-gradient(to right, #007bff, #0056b3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            margin: 0; /* Remove any default margins */
+            padding: 0; /* Remove any default padding */
+        }
+
         .calendar-container {
-            width: 300px;
+            width: 100%;
         }
 
         .table th, .table td {
             width: 40px;
             height: 40px;
             vertical-align: middle;
-        }
-
-        .bg-primary {
-            background-color: #007bff !important;
         }
 
         .highlight-today {
@@ -117,7 +150,6 @@
                         date.getFullYear() === today.getFullYear()
                     ) {
                         cell.classList.add('highlight-today');
-                        cell.setAttribute('data-highlight', 'true'); // Optional: Debugging attribute
                     }
 
                     row.appendChild(cell);
@@ -151,5 +183,3 @@
         });
     </script>
 }
-
-
