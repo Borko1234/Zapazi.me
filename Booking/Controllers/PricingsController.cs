@@ -20,10 +20,20 @@ namespace Booking.Controllers
         }
 
         // GET: Pricings
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchTerm)
         {
-            var applicationDbContext = _context.Pricings.Include(p => p.Facility);
-            return View(await applicationDbContext.ToListAsync());
+            var pricings = from p in _context.Pricings
+                           .Include(p => p.Facility)
+                           select p;
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                pricings = pricings.Where(p =>
+                    p.Facility.Name.Contains(searchTerm) ||
+                    p.PricePerHour.ToString().Contains(searchTerm));
+            }
+
+            return View(await pricings.ToListAsync());
         }
 
         // GET: Pricings/Details/5
@@ -46,27 +56,35 @@ namespace Booking.Controllers
         }
 
         // GET: Pricings/Create
+        [HttpGet]
         public IActionResult Create()
         {
-            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name");
+            ViewBag.Facilities = _context.Facilities
+                .Select(f => new SelectListItem
+                {
+                    Value = f.Id.ToString(),
+                    Text = f.Name
+                }).ToList();
             return View();
         }
 
         // POST: Pricings/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FacilityId,PricePerHour,Id")] Pricing pricing)
+        public async Task<IActionResult> Create([Bind("FacilityId,PricePerHour")] Pricing pricing)
         {
             if (ModelState.IsValid)
             {
-                pricing.Id = Guid.NewGuid();
                 _context.Add(pricing);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", pricing.FacilityId);
+            ViewBag.Facilities = _context.Facilities
+                .Select(f => new SelectListItem
+                {
+                    Value = f.Id.ToString(),
+                    Text = f.Name
+                }).ToList();
             return View(pricing);
         }
 
@@ -88,11 +106,9 @@ namespace Booking.Controllers
         }
 
         // POST: Pricings/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("FacilityId,PricePerHour,Id")] Pricing pricing)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,FacilityId,PricePerHour")] Pricing pricing)
         {
             if (id != pricing.Id)
             {
@@ -119,7 +135,7 @@ namespace Booking.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", pricing.FacilityId);
+            ViewBag.FacilityId = new SelectList(_context.Facilities, "Id", "Name", pricing.FacilityId);
             return View(pricing);
         }
 

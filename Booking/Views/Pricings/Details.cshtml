@@ -25,7 +25,21 @@
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="d-flex justify-content-start gap-3 mt-4">
+    <!-- Edit Button -->
+    <a href="@Url.Action("Edit", "Pricings", new { id = Model?.Id })" class="btn btn-success btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
+        <span>Edit</span>
+    </a>
+
+    <!-- Back to List Button -->
+    <a href="@Url.Action("Index", "Pricings")" class="btn btn-secondary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
+        <span>Back to List</span>
+    </a>
+
+    <!-- Delete Button -->
+    <form asp-action="Delete" asp-route-id="@Model?.Id" method="post" style="display: inline;">
+        <button type="submit" class="btn btn-danger btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
+            <span>Delete</span>
+        </button>
+    </form>
 </div>

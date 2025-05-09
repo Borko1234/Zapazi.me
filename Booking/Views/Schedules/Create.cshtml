@@ -11,7 +11,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" id="CreateForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Open" class="control-label"></label>
@@ -23,15 +23,22 @@
                 <input asp-for="Close" class="form-control" />
                 <span asp-validation-for="Close" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="d-flex justify-content-start gap-3 mt-4">
+    <!-- Create Button -->
+    <button type="submit" form="CreateForm" class="btn btn-primary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
+        
+        <span>Create</span>
+    </button>
+
+    <!-- Back to List Button -->
+    <a href="@Url.Action("Index", "Schedules")" class="btn btn-secondary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
+       
+        <span>Back to List</span>
+    </a>
 </div>
 
 @section Scripts {

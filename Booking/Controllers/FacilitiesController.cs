@@ -20,12 +20,24 @@ namespace Booking.Controllers
         }
 
         // GET: Facilities
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchTerm)
         {
-            return View(await _context.Facilities.ToListAsync());
+            // Retrieve all facilities
+            var facilities = from f in _context.Facilities
+                             select f;
+
+            // Filter facilities if a search term is provided
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                facilities = facilities.Where(f => f.Name.Contains(searchTerm));
+            }
+
+            // Return the filtered list to the view
+            return View(await facilities.ToListAsync());
         }
 
-        // GET: Facilities/Details/5
+        // GET: Facilities/Details by ID
+        [HttpGet]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -34,13 +46,34 @@ namespace Booking.Controllers
             }
 
             var facility = await _context.Facilities
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(f => f.Id == id);
+
             if (facility == null)
             {
                 return NotFound();
             }
 
             return View(facility);
+        }
+
+        // GET: Facilities/Details by Search Term
+        [HttpGet("Facilities/SearchDetails")]
+        public async Task<IActionResult> DetailsBySearch(string searchTerm)
+        {
+            if (string.IsNullOrEmpty(searchTerm))
+            {
+                return NotFound();
+            }
+
+            var facility = await _context.Facilities
+                .FirstOrDefaultAsync(f => f.Name == searchTerm);
+
+            if (facility == null)
+            {
+                return NotFound();
+            }
+
+            return View("Details", facility); // Reuse the Details view
         }
 
         // GET: Facilities/Create
@@ -136,17 +169,16 @@ namespace Booking.Controllers
         }
 
         // POST: Facilities/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var facility = await _context.Facilities.FindAsync(id);
             if (facility != null)
             {
                 _context.Facilities.Remove(facility);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
