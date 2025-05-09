@@ -1,6 +1,7 @@
 using Booking.Data;
 using Booking.Data.Identity.Roles;
 using Booking.Data.Identity.Users;
+using Booking.Data.Seeding;
 using Booking.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -10,7 +11,7 @@ namespace Booking
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,7 @@ namespace Booking
                 .AddIdentity<BookingUser, BookingRole>(options => {
                     options.SignIn.RequireConfirmedAccount = true;
                 })
+                .AddRoles<BookingRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -36,6 +38,12 @@ namespace Booking
 
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                await SeedRoles.Initialize(services);
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -63,6 +71,8 @@ namespace Booking
                .WithStaticAssets();
 
             app.UseRequestLocalization("en-UK");
+
+            
 
             app.Run();
         }

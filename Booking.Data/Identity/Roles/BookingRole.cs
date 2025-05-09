@@ -9,5 +9,11 @@ namespace Booking.Data.Identity.Roles
 {
     public class BookingRole : IdentityRole
     {
+        public BookingRole() : base()
+        {
+        }
+        public BookingRole(string roleName) : base(roleName)
+        {
+        }
     }
 }
