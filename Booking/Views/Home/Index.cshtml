@@ -3,8 +3,153 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Welcome to Zapazi.me</h1>
+    <p class="lead">Manage your bookings and schedules effortlessly.</p>
 </div>
+
+<div class="container mt-5 d-flex justify-content-end">
+    <!-- Dynamic Calendar -->
+    <div class="calendar-container">
+        <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
+            <button id="prevMonth" class="btn btn-primary btn-sm">&lt;</button>
+            <h5 id="calendarMonth" class="mb-0"></h5>
+            <button id="nextMonth" class="btn btn-primary btn-sm">&gt;</button>
+        </div>
+        <table class="table table-bordered text-center">
+            <thead>
+                <tr>
+                    <th>Sun</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>
+                </tr>
+            </thead>
+            <tbody id="calendarBody">
+                <!-- Calendar days will be dynamically generated here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .calendar-container {
+            width: 300px;
+        }
+
+        .table th, .table td {
+            width: 40px;
+            height: 40px;
+            vertical-align: middle;
+        }
+
+        .bg-primary {
+            background-color: #007bff !important;
+        }
+
+        .highlight-today {
+            background-color: rgba(0, 123, 255, 0.5) !important; /* Blue with 50% opacity */
+            color: white !important;
+            font-weight: bold;
+            border-radius: 50%; /* Optional: Makes the highlight circular */
+        }
+
+        .btn-primary {
+            background-color: #007bff !important;
+            border-color: #007bff !important;
+            color: white !important;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3 !important;
+            border-color: #0056b3 !important;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const calendarBody = document.getElementById('calendarBody');
+            const calendarMonth = document.getElementById('calendarMonth');
+            const prevMonthButton = document.getElementById('prevMonth');
+            const nextMonthButton = document.getElementById('nextMonth');
+
+            let currentDate = new Date();
+
+            function renderCalendar(date) {
+                // Clear the calendar body
+                calendarBody.innerHTML = '';
+
+                // Get the first and last days of the month
+                const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+                const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+                // Set the month and year in the header
+                const monthNames = [
+                    'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'
+                ];
+                calendarMonth.textContent = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+
+                // Calculate the starting day of the week
+                const startDay = firstDay.getDay();
+
+                // Fill in the days
+                let row = document.createElement('tr');
+                for (let i = 0; i < startDay; i++) {
+                    const emptyCell = document.createElement('td');
+                    row.appendChild(emptyCell);
+                }
+
+                for (let day = 1; day <= lastDay.getDate(); day++) {
+                    const cell = document.createElement('td');
+                    cell.textContent = day;
+
+                    // Highlight today's date
+                    const today = new Date();
+                    if (
+                        day === today.getDate() &&
+                        date.getMonth() === today.getMonth() &&
+                        date.getFullYear() === today.getFullYear()
+                    ) {
+                        cell.classList.add('highlight-today');
+                        cell.setAttribute('data-highlight', 'true'); // Optional: Debugging attribute
+                    }
+
+                    row.appendChild(cell);
+
+                    // Start a new row after Saturday
+                    if ((startDay + day) % 7 === 0) {
+                        calendarBody.appendChild(row);
+                        row = document.createElement('tr');
+                    }
+                }
+
+                // Append the last row
+                if (row.children.length > 0) {
+                    calendarBody.appendChild(row);
+                }
+            }
+
+            // Event listeners for navigation buttons
+            prevMonthButton.addEventListener('click', function () {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderCalendar(currentDate);
+            });
+
+            nextMonthButton.addEventListener('click', function () {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                renderCalendar(currentDate);
+            });
+
+            // Initial render
+            renderCalendar(currentDate);
+        });
+    </script>
+}
 
 
