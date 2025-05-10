@@ -1,8 +1,17 @@
 ﻿@page
 @model IndexModel
+@using Booking.Data.Identity.Users
+@using Booking.Data.Identity.Roles
+
+@inject UserManager<BookingUser> userManager
+@inject RoleManager<BookingRole> roleManager
 @{
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
+    var user = await userManager.GetUserAsync(User);
+
+    var userRoles = await userManager.GetRolesAsync(user!);
+    ;
 }
 
 <h3>@ViewData["Title"]</h3>
@@ -11,7 +20,7 @@
     <div class="col-md-6">
         <form id="profile-form" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating">
+            <div class="form-floating mb-3">
                 <input asp-for="Input.Name" class="form-control" />
                 <label asp-for="Input.Name" class="form-label"></label>
             </div>
@@ -23,6 +32,12 @@
                 <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number."/>
                 <label asp-for="Input.PhoneNumber" class="form-label"></label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                @foreach(var role in userRoles)
+                {
+                    @Html.DisplayFor(modelItem => role);
+                }
             </div>
             <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
         </form>

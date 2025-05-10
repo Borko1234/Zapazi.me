@@ -11,7 +11,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -28,23 +28,25 @@
                 <input asp-for="Address" class="form-control" />
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
+
+            <div class="d-flex justify-content-start gap-3 mt-4">
+                <!-- Create Button -->
+                <button href="@Url.Action("Create", "Facilities")" type="submit" class="btn btn-primary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
+
+                    <span>Create</span>
+                </button>
+
+                <!-- Back to List Button -->
+                <a href="@Url.Action("Index", "Facilities")" class="btn btn-secondary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
+
+                    <span>Back to List</span>
+                </a>
+            </div>
         </form>
     </div>
 </div>
 
-<div class="d-flex justify-content-start gap-3 mt-4">
-    <!-- Create Button -->
-    <a href="@Url.Action("Create", "Facilities")" class="btn btn-primary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
-       
-        <span>Create</span>
-    </a>
 
-    <!-- Back to List Button -->
-    <a href="@Url.Action("Index", "Facilities")" class="btn btn-secondary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
-       
-        <span>Back to List</span>
-    </a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
