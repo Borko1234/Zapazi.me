@@ -5,43 +5,39 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<h1 class="mb-4">Create Reservation</h1>
 
-<h4>Reservation</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="card shadow-sm" style="max-width: 500px;">
+    <div class="card-body">
+        <h4 class="card-title mb-3" style="color: #000000;">Reservation</h4>
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="FacilityId" class="control-label"></label>
-                <select asp-for="FacilityId" class ="form-control" asp-items="ViewBag.FacilityId"></select>
+                <select asp-for="FacilityId" class="form-control" asp-items="ViewBag.FacilityId"></select>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Date" class="control-label"></label>
                 <input asp-for="Date" class="form-control" />
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Duration" class="control-label"></label>
                 <input asp-for="Duration" class="form-control" />
                 <span asp-validation-for="Duration" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="d-flex justify-content-start gap-3 mt-4">
+                <input type="submit" value="Create" class="btn btn-primary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;" />
+                <a asp-action="Index" class="btn btn-secondary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">Back to List</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

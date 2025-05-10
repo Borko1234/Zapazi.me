@@ -1,16 +1,26 @@
 ﻿@model IEnumerable<Booking.Data.Entities.Reservation>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Reservations";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Reservations</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<div class="d-flex justify-content-start align-items-center mt-4 gap-3">
+    <!-- Create Button -->
+    <a href="@Url.Action("Create", "Reservations")" class="btn btn-primary d-flex justify-content-center align-items-center" style="height: 38px; padding: 0 20px; border-radius: 5px;">
+        Create
+    </a>
+
+    <!-- Search Bar (optional, you can implement search logic in your controller) -->
+    <form asp-action="Index" method="get" class="d-flex">
+        <input type="text" name="searchTerm" class="form-control" placeholder="Enter User or Facility..." style="width: 300px;" />
+        <button type="submit" class="btn btn-secondary ms-2">Search</button>
+    </form>
+</div>
+
+<table class="table mt-4">
     <thead>
         <tr>
             <th>
@@ -28,36 +38,30 @@
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Facility.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.UserName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Duration)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { item.Id }) |
-                @Html.ActionLink("Details", "Details", new { item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { item.Id })
-            </td>
-        </tr>
+    <tr>
+        <td>
+            <a href="@Url.Action("Details", "Reservations", new { id = item.Id })" class="link-style">
+                @item.Facility.Name
+            </a>
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.User.UserName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Duration)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+    </tr>
 }
     </tbody>
 </table>
