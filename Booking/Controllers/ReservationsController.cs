@@ -25,10 +25,21 @@ namespace Booking.Controllers
         }
 
         // GET: Reservations
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchTerm)
         {
-            var applicationDbContext = _context.Reservations.Include(r => r.Facility).Include(r => r.User);
-            return View(await applicationDbContext.ToListAsync());
+            var reservations = _context.Reservations
+                .Include(r => r.Facility)
+                .Include(r => r.User)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                reservations = reservations.Where(r =>
+                    r.Facility.Name.Contains(searchTerm) ||
+                    r.User.UserName.Contains(searchTerm));
+            }
+
+            return View(await reservations.ToListAsync());
         }
 
         // GET: Reservations/Details/5
@@ -101,17 +112,16 @@ namespace Booking.Controllers
         }
 
         // POST: Reservations/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("FacilityId,UserId,Date,Duration,Description,Id")] Reservation reservation)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,FacilityId,Date,Duration,Description")] Reservation reservation)
         {
             if (id != reservation.Id)
             {
                 return NotFound();
             }
 
+        
             if (ModelState.IsValid)
             {
                 try
@@ -121,7 +131,7 @@ namespace Booking.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ReservationExists(reservation.Id))
+                    if (!_context.Reservations.Any(e => e.Id == reservation.Id))
                     {
                         return NotFound();
                     }
@@ -133,7 +143,6 @@ namespace Booking.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", reservation.FacilityId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", reservation.UserId);
             return View(reservation);
         }
 
