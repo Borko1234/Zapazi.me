@@ -116,6 +116,8 @@ namespace Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,FacilityId,Date,Duration,Description")] Reservation reservation)
         {
+            ModelState.Remove("UserId");
+
             if (id != reservation.Id)
             {
                 return NotFound();
@@ -126,6 +128,9 @@ namespace Booking.Controllers
             {
                 try
                 {
+                    var user = await _userManager.GetUserAsync(User);
+                    reservation.UserId = user.Id;
+
                     _context.Update(reservation);
                     await _context.SaveChangesAsync();
                 }
