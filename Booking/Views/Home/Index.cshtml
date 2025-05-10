@@ -36,6 +36,17 @@
 </div>
 <!-- End Feature Section -->
 
+<!-- Facilities Table Section -->
+<div class="container my-5">
+    <h2 class="text-center mb-4" style="color: #09325e;">Нашите обекти</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <button id="facilitiesPrev" class="btn btn-primary btn-sm">&lt;</button>
+        <span></span>
+        <button id="facilitiesNext" class="btn btn-primary btn-sm">&gt;</button>
+    </div>
+    <div id="facilitiesTable" class="row"></div>
+</div>
+
 <!-- Main Content -->
 <div class="container mt-5">
     <div class="row">
@@ -71,7 +82,7 @@
                         </tr>
                     </thead>
                     <tbody id="calendarBody">
-                        <!-- Calendar days will be dynamically generated here -->
+                     
                     </tbody>
                 </table>
             </div>
@@ -87,16 +98,16 @@
 @section Styles {
     <style>
         .hero-section {
-            width: 100%; /* Full width */
-            height: 60vh; /* Adjust as needed */
+            width: 100%;
+            height: 60vh; 
             background: linear-gradient(to right, #007bff, #0056b3);
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             color: white;
-            margin: 0; /* Remove any default margins */
-            padding: 0; /* Remove any default padding */
+            margin: 0;
+            padding: 0; 
         }
 
         .calendar-container {
@@ -110,10 +121,10 @@
         }
 
         .highlight-today {
-            background-color: rgba(0, 123, 255, 0.5) !important; /* Blue with 50% opacity */
+            background-color: rgba(0, 123, 255, 0.5) !important; 
             color: white !important;
             font-weight: bold;
-            border-radius: 50%; /* Optional: Makes the highlight circular */
+            border-radius: 50%;
         }
 
         .btn-primary {
@@ -140,24 +151,19 @@
             let currentDate = new Date();
 
             function renderCalendar(date) {
-                // Clear the calendar body
                 calendarBody.innerHTML = '';
 
-                // Get the first and last days of the month
                 const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
                 const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
-                // Set the month and year in the header
                 const monthNames = [
                     'January', 'February', 'March', 'April', 'May', 'June',
                     'July', 'August', 'September', 'October', 'November', 'December'
                 ];
                 calendarMonth.textContent = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
 
-                // Calculate the starting day of the week
                 const startDay = firstDay.getDay();
 
-                // Fill in the days
                 let row = document.createElement('tr');
                 for (let i = 0; i < startDay; i++) {
                     const emptyCell = document.createElement('td');
@@ -168,7 +174,6 @@
                     const cell = document.createElement('td');
                     cell.textContent = day;
 
-                    // Highlight today's date
                     const today = new Date();
                     if (
                         day === today.getDate() &&
@@ -180,20 +185,17 @@
 
                     row.appendChild(cell);
 
-                    // Start a new row after Saturday
                     if ((startDay + day) % 7 === 0) {
                         calendarBody.appendChild(row);
                         row = document.createElement('tr');
                     }
                 }
 
-                // Append the last row
                 if (row.children.length > 0) {
                     calendarBody.appendChild(row);
                 }
             }
 
-            // Event listeners for navigation buttons
             prevMonthButton.addEventListener('click', function () {
                 currentDate.setMonth(currentDate.getMonth() - 1);
                 renderCalendar(currentDate);
@@ -204,8 +206,77 @@
                 renderCalendar(currentDate);
             });
 
-            // Initial render
             renderCalendar(currentDate);
         });
+
+        const facilities = [
+            @foreach (var facility in (IEnumerable<dynamic>)ViewBag.Facilities)
+            {
+                <text>
+                {
+                    id: "@facility.Id",
+                    name: "@facility.Name",
+                    address: "@facility.Address",
+                    interest: "@facility.Interest",
+                    freeSlots: "@facility.FreeSlots"
+                },
+                </text>
+            }
+        ];
+
+        let startIdx = 0;
+        const pageSize = 6; 
+
+        function renderFacilities() {
+            const table = document.getElementById('facilitiesTable');
+            table.innerHTML = '';
+            const endIdx = Math.min(startIdx + pageSize, facilities.length);
+            const facilitiesToShow = facilities.slice(startIdx, endIdx);
+
+            for (let row = 0; row < 2; row++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'row mb-3';
+                for (let col = 0; col < 3; col++) {
+                    const idx = row * 3 + col;
+                    if (idx < facilitiesToShow.length) {
+                        const f = facilitiesToShow[idx];
+                        const colDiv = document.createElement('div');
+                        colDiv.className = 'col-md-4 mb-3';
+                        colDiv.innerHTML = `
+                            <div class="card h-100 text-center shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-2">${f.name}</h5>
+                                    <h6 class="fw-bold mb-2">${f.address}</h6>
+                                    <div class="mb-2" style="color: ${f.interest === 'Среден' ? 'orange' : (f.interest === 'Висок' ? 'red' : '#28a745')}; font-size: 1.2rem;">
+                                        Интерес: ${f.interest}
+                                    </div>
+                                    <div style="color: #888;">${f.freeSlots/60} свободни часове</div>
+                                </div>
+                            </div>
+                        `;
+                        rowDiv.appendChild(colDiv);
+                    } else {
+                        const colDiv = document.createElement('div');
+                        colDiv.className = 'col-md-4 mb-3';
+                        rowDiv.appendChild(colDiv);
+                    }
+                }
+                table.appendChild(rowDiv);
+            }
+        }
+
+        document.getElementById('facilitiesPrev').addEventListener('click', function () {
+            startIdx = Math.max(0, startIdx - pageSize);
+            renderFacilities();
+        });
+
+        document.getElementById('facilitiesNext').addEventListener('click', function () {
+            if (startIdx + pageSize < facilities.length) {
+                startIdx += pageSize;
+                renderFacilities();
+            }
+        });
+
+        renderFacilities();
     </script>
 }
