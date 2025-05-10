@@ -93,11 +93,13 @@ namespace Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Mobile,Address,Id")] Facility facility)
         {
+            ModelState.Remove("OwnerId");
+
             if (ModelState.IsValid)
             {
                 facility.Id = Guid.NewGuid();
                 var user = await _userManager.GetUserAsync(User);
-                facility.OwnerId = user.Id; // Set the owner to the current user
+                facility.OwnerId = user!.Id; // Set the owner to the current user
 
                 _context.Add(facility);
                 await _context.SaveChangesAsync();
@@ -134,10 +136,15 @@ namespace Booking.Controllers
                 return NotFound();
             }
 
+            ModelState.Remove("OwnerId");
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var user = await _userManager.GetUserAsync(User);
+                    facility.OwnerId = user.Id;
+
                     _context.Update(facility);
                     await _context.SaveChangesAsync();
                 }
@@ -195,19 +202,3 @@ namespace Booking.Controllers
         }
     }
 }
-
-namespace Booking.Data.Entities
-{
-    public class Facility
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Mobile { get; set; }
-        public string Address { get; set; }
-
-        public string OwnerId { get; set; }
-        public BookingUser Owner { get; set; }
-    }
-}
-
-
