@@ -233,15 +233,20 @@
             const endIdx = Math.min(startIdx + pageSize, facilities.length);
             const facilitiesToShow = facilities.slice(startIdx, endIdx);
 
-            for (let row = 0; row < 2; row++) {
+            // Calculate how many rows we need (2 rows, 3 columns per page)
+            const numRows = 2;
+            const numCols = 3;
+
+            for (let row = 0; row < numRows; row++) {
                 const rowDiv = document.createElement('div');
                 rowDiv.className = 'row mb-3';
-                for (let col = 0; col < 3; col++) {
-                    const idx = row * 3 + col;
-                    if (idx < facilitiesToShow.length) {
-                        const f = facilitiesToShow[idx];
-                        const colDiv = document.createElement('div');
-                        colDiv.className = 'col-md-4 mb-3';
+                for (let col = 0; col < numCols; col++) {
+                    const idx = row * numCols + col;
+                    const globalIdx = startIdx + idx;
+                    const colDiv = document.createElement('div');
+                    colDiv.className = 'col-md-4 mb-3';
+                    if (globalIdx < facilities.length) {
+                        const f = facilities[globalIdx];
                         colDiv.innerHTML = `
                             <div class="card h-100 text-center shadow-sm">
                                 <div class="card-body">
@@ -250,16 +255,12 @@
                                     <div class="mb-2" style="color: ${f.interest === 'Среден' ? 'orange' : (f.interest === 'Висок' ? 'red' : '#28a745')}; font-size: 1.2rem;">
                                         Интерес: ${f.interest}
                                     </div>
-                                    <div style="color: #888;">${f.freeSlots/60} свободни часове</div>
+                                    <div style="color: #888;">${(f.freeSlots/60).toFixed(1)} свободни часове</div>
                                 </div>
                             </div>
                         `;
-                        rowDiv.appendChild(colDiv);
-                    } else {
-                        const colDiv = document.createElement('div');
-                        colDiv.className = 'col-md-4 mb-3';
-                        rowDiv.appendChild(colDiv);
                     }
+                    rowDiv.appendChild(colDiv);
                 }
                 table.appendChild(rowDiv);
             }
