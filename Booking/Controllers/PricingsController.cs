@@ -75,6 +75,7 @@ namespace Booking.Controllers
         {
             if (ModelState.IsValid)
             {
+                pricing.Id = Guid.NewGuid();
                 _context.Add(pricing);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
