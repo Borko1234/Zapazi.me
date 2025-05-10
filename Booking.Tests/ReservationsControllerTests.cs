@@ -1,14 +1,16 @@
-﻿using NUnit.Framework;
+﻿using NUnit;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Booking.Data;
 using Booking.Data.Entities;
 using Booking.Controllers;
 using Booking.Data.Identity.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace Booking.Tests
 {
@@ -22,7 +24,7 @@ namespace Booking.Tests
 
             var context = new ApplicationDbContext(options);
 
-            var user = new BookingUser { Id = "user1", UserName = "testuser" };
+            var user = new BookingUser { Id = "user1", Name = "testuser" };
             var facility = new Facility { Id = Guid.NewGuid(), Name = "Gym", Mobile = "123", Address = "Main St" };
 
             context.Users.Add(user);

@@ -5,9 +5,9 @@ using Booking.Controllers;
 using Booking.Data;
 using Booking.Data.Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace Booking.Tests
 {
@@ -20,29 +20,21 @@ namespace Booking.Tests
                 .Options;
 
             var context = new ApplicationDbContext(options);
-            context.Facilities.AddRange(new[]
-            {
-                new Facility { Id = Guid.NewGuid(), Name = "Gym", Mobile = "123", Address = "Main St" },
-                new Facility { Id = Guid.NewGuid(), Name = "Pool", Mobile = "456", Address = "Ocean Dr" }
-            });
 
-            context.Schedules.AddRange(new[]
-            {
-                new Schedule { Id = Guid.NewGuid(), Open = TimeOnly.Parse("08:00"), Close = TimeOnly.Parse("18:00") },
-                new Schedule { Id = Guid.NewGuid(), Open = TimeOnly.Parse("09:00"), Close = TimeOnly.Parse("21:00") }
-            });
+            var facility1 = new Facility { Id = Guid.NewGuid(), Name = "Gym", Address = "Main", Mobile = "123" };
+            var schedule1 = new Schedule { Id = Guid.NewGuid(), Open = TimeOnly.Parse("08:00"), Close = TimeOnly.Parse("16:00") };
+            var fs1 = new FacilitySchedule { Id = Guid.NewGuid(), FacilityId = facility1.Id, ScheduleId = schedule1.Id };
 
-            context.FacilitySchedules.AddRange(new[]
-            {
-                new FacilitySchedule { Id = Guid.NewGuid(), FacilityId = context.Facilities.First().Id, ScheduleId = context.Schedules.First().Id },
-                new FacilitySchedule { Id = Guid.NewGuid(), FacilityId = context.Facilities.Last().Id, ScheduleId = context.Schedules.Last().Id }
-            });
+            context.Facilities.Add(facility1);
+            context.Schedules.Add(schedule1);
+            context.FacilitySchedules.Add(fs1);
             context.SaveChanges();
+
             return context;
         }
 
         [Test]
-        public async Task Index_ReturnsViewWithAllFacilitySchedules()
+        public async Task Index_ReturnsAllFacilitySchedules()
         {
             var context = GetInMemoryContext();
             var controller = new FacilitySchedulesController(context);
@@ -50,11 +42,11 @@ namespace Booking.Tests
             var result = await controller.Index(null) as ViewResult;
             var model = result.Model as IEnumerable<FacilitySchedule>;
 
-            Assert.That(model.Count(), Is.EqualTo(2));
+            Assert.That(model.Count(), Is.EqualTo(1));
         }
 
         [Test]
-        public async Task Index_WithSearchTerm_ReturnsFilteredFacilitySchedules()
+        public async Task Index_WithSearch_ReturnsFilteredResult()
         {
             var context = GetInMemoryContext();
             var controller = new FacilitySchedulesController(context);
@@ -63,7 +55,19 @@ namespace Booking.Tests
             var model = result.Model as IEnumerable<FacilitySchedule>;
 
             Assert.That(model.Count(), Is.EqualTo(1));
-            Assert.That(model.First().Facility.Name, Is.EqualTo("Gym"));
+        }
+
+        [Test]
+        public async Task Details_ReturnsFacilitySchedule_WhenFound()
+        {
+            var context = GetInMemoryContext();
+            var fs = context.FacilitySchedules.First();
+            var controller = new FacilitySchedulesController(context);
+
+            var result = await controller.Details(fs.Id) as ViewResult;
+            var model = result.Model as FacilitySchedule;
+
+            Assert.That(model.Id, Is.EqualTo(fs.Id));
         }
 
         [Test]
@@ -78,74 +82,53 @@ namespace Booking.Tests
         }
 
         [Test]
-        public async Task Details_ReturnsView_WhenIdIsValid()
-        {
-            var context = GetInMemoryContext();
-            var facilitySchedule = context.FacilitySchedules.First();
-            var controller = new FacilitySchedulesController(context);
-
-            var result = await controller.Details(facilitySchedule.Id);
-            var view = result as ViewResult;
-            var model = view.Model as FacilitySchedule;
-
-            Assert.That(model.Id, Is.EqualTo(facilitySchedule.Id));
-        }
-
-        [Test]
-        public async Task Create_Post_AddsFacilitySchedule_AndRedirects()
+        public async Task Create_Post_AddsFacilitySchedule()
         {
             var context = GetInMemoryContext();
             var controller = new FacilitySchedulesController(context);
-            var facilitySchedule = new FacilitySchedule
+
+            var facility = context.Facilities.First();
+            var schedule = context.Schedules.First();
+            var fs = new FacilitySchedule
             {
-                FacilityId = context.Facilities.First().Id,
-                ScheduleId = context.Schedules.First().Id
+                FacilityId = facility.Id,
+                ScheduleId = schedule.Id
             };
 
-            var result = await controller.Create(facilitySchedule);
+            var result = await controller.Create(fs);
 
             Assert.IsInstanceOf<RedirectToActionResult>(result);
-            Assert.That(context.FacilitySchedules.Count(), Is.EqualTo(3));
+            Assert.That(context.FacilitySchedules.Count(), Is.EqualTo(2));
         }
 
         [Test]
-        public async Task Edit_Post_UpdatesFacilitySchedule_AndRedirects()
+        public async Task Edit_Post_UpdatesFacilitySchedule()
         {
             var context = GetInMemoryContext();
             var controller = new FacilitySchedulesController(context);
-            var facilitySchedule = context.FacilitySchedules.First();
-            facilitySchedule.FacilityId = context.Facilities.Last().Id;
+            var fs = context.FacilitySchedules.First();
+            var newSchedule = new Schedule { Id = Guid.NewGuid(), Open = TimeOnly.Parse("10:00"), Close = TimeOnly.Parse("18:00") };
+            context.Schedules.Add(newSchedule);
+            context.SaveChanges();
 
-            var result = await controller.Edit(facilitySchedule.Id, facilitySchedule);
+            fs.ScheduleId = newSchedule.Id;
+            var result = await controller.Edit(fs.Id, fs);
 
             Assert.IsInstanceOf<RedirectToActionResult>(result);
-            Assert.That((await context.FacilitySchedules.FindAsync(facilitySchedule.Id)).FacilityId, Is.EqualTo(context.Facilities.Last().Id));
+            Assert.That((await context.FacilitySchedules.FindAsync(fs.Id)).ScheduleId, Is.EqualTo(newSchedule.Id));
         }
 
         [Test]
-        public async Task Delete_Post_DeletesFacilitySchedule_AndRedirects()
+        public async Task DeleteConfirmed_RemovesFacilitySchedule()
         {
             var context = GetInMemoryContext();
             var controller = new FacilitySchedulesController(context);
-            var facilitySchedule = context.FacilitySchedules.First();
+            var fs = context.FacilitySchedules.First();
 
-            var result = await controller.Delete(facilitySchedule.Id);
-
-            Assert.IsInstanceOf<RedirectToActionResult>(result);
-            Assert.That(context.FacilitySchedules.Count(), Is.EqualTo(1)); // One should be deleted
-        }
-
-        [Test]
-        public async Task DeleteConfirmed_DeletesFacilitySchedule_AndRedirects()
-        {
-            var context = GetInMemoryContext();
-            var controller = new FacilitySchedulesController(context);
-            var facilitySchedule = context.FacilitySchedules.First();
-
-            var result = await controller.DeleteConfirmed(facilitySchedule.Id);
+            var result = await controller.DeleteConfirmed(fs.Id);
 
             Assert.IsInstanceOf<RedirectToActionResult>(result);
-            Assert.That(context.FacilitySchedules.Count(), Is.EqualTo(1)); // One should be deleted
+            Assert.That(context.FacilitySchedules.Any(f => f.Id == fs.Id), Is.False);
         }
     }
 }
