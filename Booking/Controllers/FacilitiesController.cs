@@ -7,16 +7,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Booking.Data;
 using Booking.Data.Entities;
+using Booking.Data.Identity.Users;
+using Microsoft.AspNetCore.Identity;
 
 namespace Booking.Controllers
 {
     public class FacilitiesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<BookingUser> _userManager;
 
-        public FacilitiesController(ApplicationDbContext context)
+        public FacilitiesController(ApplicationDbContext context, UserManager<BookingUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Facilities
@@ -92,6 +96,9 @@ namespace Booking.Controllers
             if (ModelState.IsValid)
             {
                 facility.Id = Guid.NewGuid();
+                var user = await _userManager.GetUserAsync(User);
+                facility.OwnerId = user.Id; // Set the owner to the current user
+
                 _context.Add(facility);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -188,3 +195,19 @@ namespace Booking.Controllers
         }
     }
 }
+
+namespace Booking.Data.Entities
+{
+    public class Facility
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Mobile { get; set; }
+        public string Address { get; set; }
+
+        public string OwnerId { get; set; }
+        public BookingUser Owner { get; set; }
+    }
+}
+
+
