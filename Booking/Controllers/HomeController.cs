@@ -20,6 +20,7 @@ namespace Booking.Controllers
         public IActionResult Index()
         {
             ViewBag.FacilityCount = _context.Facilities.Count();
+            ViewBag.ReservationCount = _context.Reservations.Count();
             return View();
         }
 
