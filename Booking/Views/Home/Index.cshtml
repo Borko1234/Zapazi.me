@@ -41,7 +41,7 @@
     <h2 class="text-center mb-4" style="color: #09325e;">Нашите обекти</h2>
     <div class="d-flex justify-content-between align-items-center mb-3">
         <button id="facilitiesPrev" class="btn btn-primary btn-sm">&lt;</button>
-        <span></span>
+        <input id="facilitySearch" type="text" class="form-control mx-2" style="max-width: 300px;" placeholder="Търси обект...">
         <button id="facilitiesNext" class="btn btn-primary btn-sm">&gt;</button>
     </div>
     <div id="facilitiesTable" class="row"></div>
@@ -225,15 +225,15 @@
         ];
 
         let startIdx = 0;
-        const pageSize = 6; 
+        const pageSize = 6;
+        let filteredFacilities = facilities;
 
         function renderFacilities() {
             const table = document.getElementById('facilitiesTable');
             table.innerHTML = '';
-            const endIdx = Math.min(startIdx + pageSize, facilities.length);
-            const facilitiesToShow = facilities.slice(startIdx, endIdx);
+            const endIdx = Math.min(startIdx + pageSize, filteredFacilities.length);
+            const facilitiesToShow = filteredFacilities.slice(startIdx, endIdx);
 
-            // Calculate how many rows we need (2 rows, 3 columns per page)
             const numRows = 2;
             const numCols = 3;
 
@@ -245,19 +245,21 @@
                     const globalIdx = startIdx + idx;
                     const colDiv = document.createElement('div');
                     colDiv.className = 'col-md-4 mb-3';
-                    if (globalIdx < facilities.length) {
-                        const f = facilities[globalIdx];
+                    if (globalIdx < filteredFacilities.length) {
+                        const f = filteredFacilities[globalIdx];
                         colDiv.innerHTML = `
-                            <div class="card h-100 text-center shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-2">${f.name}</h5>
-                                    <h6 class="fw-bold mb-2">${f.address}</h6>
-                                    <div class="mb-2" style="color: ${f.interest === 'Среден' ? 'orange' : (f.interest === 'Висок' ? 'red' : '#28a745')}; font-size: 1.2rem;">
-                                        Интерес: ${f.interest}
+                            <a href="/Reservations/Create?facilityId=${f.id}" style="text-decoration:none; color:inherit;">
+                                <div class="card h-100 text-center shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-2">${f.name}</h5>
+                                        <h6 class="fw-bold mb-2">${f.address}</h6>
+                                        <div class="mb-2" style="color: ${f.interest === 'Среден' ? 'orange' : (f.interest === 'Висок' ? 'red' : '#28a745')}; font-size: 1.2rem;">
+                                            Интерес: ${f.interest}
+                                        </div>
+                                        <div style="color: #888;">${(f.freeSlots/60).toFixed(1)} свободни часове</div>
                                     </div>
-                                    <div style="color: #888;">${(f.freeSlots/60).toFixed(1)} свободни часове</div>
                                 </div>
-                            </div>
+                            </a>
                         `;
                     }
                     rowDiv.appendChild(colDiv);
@@ -272,10 +274,21 @@
         });
 
         document.getElementById('facilitiesNext').addEventListener('click', function () {
-            if (startIdx + pageSize < facilities.length) {
+            if (startIdx + pageSize < filteredFacilities.length) {
                 startIdx += pageSize;
                 renderFacilities();
             }
+        });
+
+        // Search functionality
+        document.getElementById('facilitySearch').addEventListener('input', function () {
+            const keyword = this.value.trim().toLowerCase();
+            filteredFacilities = facilities.filter(f =>
+                f.name.toLowerCase().includes(keyword) ||
+                f.address.toLowerCase().includes(keyword)
+            );
+            startIdx = 0;
+            renderFacilities();
         });
 
         renderFacilities();
