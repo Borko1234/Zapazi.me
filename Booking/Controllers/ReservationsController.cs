@@ -63,11 +63,14 @@ namespace Booking.Controllers
         }
 
         // GET: Reservations/Create
-        public IActionResult Create()
+        public IActionResult Create(Guid? facilityId)
         {
-            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name");
+            ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", facilityId);
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
-            return View();
+            var reservation = new Reservation();
+            if (facilityId.HasValue)
+                reservation.FacilityId = facilityId.Value;
+            return View(reservation);
         }
 
         // POST: Reservations/Create

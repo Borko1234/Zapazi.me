@@ -21,17 +21,18 @@ namespace Booking.Controllers
         {
             var today = DateTime.Today;
 
-            // Get all facility schedules for today (assuming one schedule per facility per day)
             var facilities = (from f in _context.Facilities
-                              join fs in _context.FacilitySchedules on f.Id equals fs.FacilityId
-                              join s in _context.Schedules on fs.ScheduleId equals s.Id
+                              join fs in _context.FacilitySchedules on f.Id equals fs.FacilityId into fsGroup
+                              from fs in fsGroup.DefaultIfEmpty()
+                              join s in _context.Schedules on fs.ScheduleId equals s.Id into sGroup
+                              from s in sGroup.DefaultIfEmpty()
                               select new
                               {
                                   f.Id,
                                   f.Name,
                                   f.Address,
-                                  WorkStart = s.Open,
-                                  WorkEnd = s.Close,
+                                  WorkStart = s != null ? s.Open : TimeOnly.MinValue,
+                                  WorkEnd = s != null ? s.Close : TimeOnly.MinValue,
                                   ReservationsToday = _context.Reservations
                                       .Where(r => r.FacilityId == f.Id && r.Date.Date == today)
                                       .Select(r => r.Duration)
@@ -40,9 +41,11 @@ namespace Booking.Controllers
                               .AsEnumerable()
                               .Select(f =>
                               {
-                                  var totalMinutes = (f.WorkEnd - f.WorkStart).TotalMinutes;
-                                  var reservedMinutes = f.ReservationsToday.Sum(d => d.TotalMinutes);
-                                  var freeMinutes = Math.Max(0, totalMinutes - reservedMinutes);
+                                  var hasSchedule = f.WorkStart != TimeOnly.MinValue && f.WorkEnd != TimeOnly.MinValue;
+                                  var totalMinutes = hasSchedule ? (f.WorkEnd - f.WorkStart).TotalMinutes : 0;
+                                  if (totalMinutes < 0) totalMinutes = 0;
+                                  var reservedMinutes = f.ReservationsToday.Any() ? f.ReservationsToday.Sum(ts => ts.TotalMinutes) : 0;
+                                  var freeMinutes = hasSchedule ? Math.Max(0, totalMinutes - reservedMinutes) : 0;
 
                                   var reservationCount = f.ReservationsToday.Count;
                                   var interest = reservationCount switch
@@ -58,14 +61,14 @@ namespace Booking.Controllers
                                       f.Name,
                                       f.Address,
                                       Interest = interest,
-                                      FreeSlots = freeMinutes // <-- Use FreeSlots instead of FreeMinutes
+                                      FreeSlots = freeMinutes
                                   };
                               })
                               .ToList();
 
             ViewBag.FacilityCount = _context.Facilities.Count();
             ViewBag.ReservationCount = _context.Reservations.Count();
-            ViewBag.Facilities = facilities; // facilities is a List of objects with Id, Name, Address, Interest, FreeSlots
+            ViewBag.Facilities = facilities;
 
             return View();
         }
