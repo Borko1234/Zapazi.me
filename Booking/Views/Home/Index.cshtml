@@ -3,7 +3,7 @@
 }
 
 <!-- Hero Section -->
-<div class="hero-section text-center text-white d-flex align-items-center justify-content-center">
+<div class="hero-section">
     <div>
         <h1 class="display-4">Welcome to Zapazi.me</h1>
         <p class="lead">Manage your bookings and schedules effortlessly.</p>
@@ -95,50 +95,50 @@
     <p>&copy; 2025 Zapazi.me. All rights reserved.</p>
 </footer> *@
 
-@section Styles {
-    <style>
-        .hero-section {
-            width: 100%;
-            height: 60vh; 
-            background: linear-gradient(to right, #007bff, #0056b3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            margin: 0;
-            padding: 0; 
-        }
 
-        .calendar-container {
-            width: 100%;
-        }
+<style>
+    .hero-section {
+        width: 100vw;
+        height: 60vh;
+        background: linear-gradient(to top, #007bff, #0056b3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        margin-left: calc(-50vw + 50%);
+        padding: 0 0px;
+    }
 
-        .table th, .table td {
-            width: 40px;
-            height: 40px;
-            vertical-align: middle;
-        }
+    .calendar-container {
+        width: 100%;
+    }
 
-        .highlight-today {
-            background-color: rgba(0, 123, 255, 0.5) !important; 
-            color: white !important;
-            font-weight: bold;
-            border-radius: 50%;
-        }
+    .table th, .table td {
+        width: 40px;
+        height: 40px;
+        vertical-align: middle;
+    }
 
-        .btn-primary {
-            background-color: #007bff !important;
-            border-color: #007bff !important;
-            color: white !important;
-        }
+    .highlight-today {
+        background-color: rgba(0, 123, 255, 0.5) !important; 
+        color: white !important;
+        font-weight: bold;
+        border-radius: 50%;
+    }
 
-        .btn-primary:hover {
-            background-color: #0056b3 !important;
-            border-color: #0056b3 !important;
-        }
-    </style>
-}
+    .btn-primary {
+        background-color: #007bff !important;
+        border-color: #007bff !important;
+        color: white !important;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3 !important;
+        border-color: #0056b3 !important;
+    }
+</style>
+
 
 @section Scripts {
     <script>
@@ -241,16 +241,17 @@
                     if (idx < facilitiesToShow.length) {
                         const f = facilitiesToShow[idx];
                         const colDiv = document.createElement('div');
+
                         colDiv.className = 'col-md-4 mb-3';
                         colDiv.innerHTML = `
                             <div class="card h-100 text-center shadow-sm">
                                 <div class="card-body">
                                     <h5 class="card-title mb-2">${f.name}</h5>
                                     <h6 class="fw-bold mb-2">${f.address}</h6>
-                                    <div class="mb-2" style="color: ${f.interest === 'Среден' ? 'orange' : (f.interest === 'Висок' ? 'red' : '#28a745')}; font-size: 1.2rem;">
+                                    <div class="mb-2" style="color: ${f.interest == '&#x421;&#x440;&#x435;&#x434;&#x435;&#x43D;' ? 'orange' : (f.interest == '&#x412;&#x438;&#x441;&#x43E;&#x43A;' ? 'red' : '#28a745')}; font-size: 1.2rem;">
                                         Интерес: ${f.interest}
                                     </div>
-                                    <div style="color: #888;">${f.freeSlots/60} свободни часове</div>
+                                    <div style="color: #888;">${Math.floor(f.freeSlots/60)}:${String(f.freeSlots%60).padStart(2, '0')} свободни часове</div>
                                 </div>
                             </div>
                         `;
