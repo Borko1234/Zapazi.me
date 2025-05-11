@@ -27,14 +27,14 @@ namespace Booking.Controllers
                               from fs in fsGroup.DefaultIfEmpty()
                               join s in _context.Schedules on fs.ScheduleId equals s.Id into sGroup
                               from s in sGroup.DefaultIfEmpty()
-                              join p in _context.Pricings on f.Id equals p.FacilityId into pGroup // Join with Pricings
+                              join p in _context.Pricings on f.Id equals p.FacilityId into pGroup 
                               from p in pGroup.DefaultIfEmpty()
                               select new
                               {
                                   f.Id,
                                   f.Name,
                                   f.Address,
-                                  Price = p != null ? p.PricePerHour : 0, // Get Price from Pricing, default to 0 if null
+                                  Price = p != null ? p.PricePerHour : 0, 
                                   WorkStart = s != null ? s.Open : TimeOnly.MinValue,
                                   WorkEnd = s != null ? s.Close : TimeOnly.MinValue,
                                   ReservationsToday = _context.Reservations
@@ -59,14 +59,14 @@ namespace Booking.Controllers
                                       _ => "High"
                                   };
 
-                                  return new
+                                  return new FacilityViewModel
                                   {
-                                      f.Id,
-                                      f.Name,
-                                      f.Address,
+                                      Id = f.Id,
+                                      Name = f.Name,
+                                      Address = f.Address,
                                       Interest = interest,
-                                      FreeSlots = freeMinutes,
-                                      f.Price
+                                      FreeSlots = (int)freeMinutes,
+                                      Price = (decimal)f.Price
                                   };
                               })
                               .ToList();
