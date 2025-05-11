@@ -2,55 +2,47 @@
     ViewData["Title"] = "Home Page";
 }
 
-<!-- Hero Section -->
 <div class="hero-section">
     <div>
         <h1 class="display-4">Welcome to Zapazi.me</h1>
         <p class="lead">Manage your bookings and schedules effortlessly.</p>
     </div>
 </div>
-
-<!-- New Feature Section -->
 <div class="container my-5">
-    <h2 class="text-center mb-4" style="color: #09325e; font-weight: 500;">ПРЕКРАСЕН НАЧИН ДА ЗАПАЗИШ ЧАС</h2>
+    <h2 class="text-center mb-4" style="color: #09325e; font-weight: 500;">An way to make a reservation!</h2>
     <div class="row text-center">
         <div class="col-md-4 mb-4">
             <img src="~/images/tick_mark_medal.png" alt="Оценки" style="height:160px; width:auto; margin-bottom:28px; display:block; margin-left:auto; margin-right:auto;">
             <div style="color: #09325e; font-size: 1.4rem; text-align:center;">
-                Избираш между @ViewBag.FacilityCount обекта
+                Choose between @ViewBag.FacilityCount facilities
             </div>
         </div>
         <div class="col-md-4 mb-4">
             <img src="~/images/clock.png" alt="Онлайн час" style="height:160px; width:auto; margin-bottom:28px; display:block; margin-left:auto; margin-right:auto;">
             <div style="color: #09325e; font-size: 1.4rem; text-align:center;">
-                Запазваш час онлайн, по всяко време
+                Book appointments online 24/7
             </div>
         </div>
         <div class="col-md-4 mb-4">
             <img src="~/images/calendar.png" alt="Запазени часове" style="height:160px; width:auto; margin-bottom:28px; display:block; margin-left:auto; margin-right:auto;">
             <div style="color: #09325e; font-size: 1.4rem; text-align:center;">
-                @ViewBag.ReservationCount направени резервации
+                @ViewBag.ReservationCount completed reservations
             </div>
         </div>
     </div>
 </div>
-<!-- End Feature Section -->
-
-<!-- Facilities Table Section -->
 <div class="container my-5">
-    <h2 class="text-center mb-4" style="color: #09325e;">Нашите обекти</h2>
+    <h2 class="text-center mb-4" style="color: #09325e;">Our Facilities</h2>
     <div class="d-flex justify-content-between align-items-center mb-3">
         <button id="facilitiesPrev" class="btn btn-primary btn-sm">&lt;</button>
-        <input id="facilitySearch" type="text" class="form-control mx-2" style="max-width: 300px;" placeholder="Търси обект...">
+        <input id="facilitySearch" type="text" class="form-control mx-2" style="max-width: 300px;" placeholder="Search for a facility...">
         <button id="facilitiesNext" class="btn btn-primary btn-sm">&gt;</button>
     </div>
     <div id="facilitiesTable" class="row"></div>
 </div>
 
-<!-- Main Content -->
 <div class="container mt-5">
     <div class="row">
-        <!-- Left Section -->
         <div class="col-md-8">
             <h2>About Us</h2>
             <p>
@@ -61,7 +53,6 @@
             </p>
         </div>
 
-        <!-- Right Section: Calendar -->
         <div class="col-md-4">
             <div class="calendar-container">
                 <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
@@ -254,7 +245,7 @@
                                     <h5 class="card-title mb-2">${f.name}</h5>
                                     <h6 class="fw-bold mb-2">${f.address}</h6>
                                     <div class="mb-2" style="color: ${f.interest == '&#x421;&#x440;&#x435;&#x434;&#x435;&#x43D;' ? 'orange' : (f.interest == '&#x412;&#x438;&#x441;&#x43E;&#x43A;' ? 'red' : '#28a745')}; font-size: 1.2rem;">
-                                        Интерес: ${f.interest}
+                                        Interest: ${f.interest}
                                     </div>
                                     <div style="color: #888;">${Math.floor(f.freeSlots/60)}:${String(f.freeSlots%60).padStart(2, '0')} свободни часове</div>
                                 </div>

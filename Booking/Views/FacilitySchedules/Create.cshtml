@@ -21,15 +21,19 @@
                 <label asp-for="ScheduleId" class="control-label"></label>
                 <select asp-for="ScheduleId" class ="form-control" asp-items="ViewBag.ScheduleId"></select>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="d-flex justify-content-start gap-3 mt-4">
+                <!-- Create Button -->
+                <button type="submit" class="btn btn-primary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
+                    <span>Create</span>
+                </button>
+
+                <!-- Back to List Button -->
+                <a asp-action="Index" class="btn btn-secondary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">
+                    <span>Back to List</span>
+                </a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
