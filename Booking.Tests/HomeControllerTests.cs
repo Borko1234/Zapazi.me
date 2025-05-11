@@ -81,7 +81,7 @@ namespace Booking.Tests
 
             var gym = model.First();
             Assert.That(gym.Name, Is.EqualTo("Gym"));
-            Assert.That(gym.Interest, Is.EqualTo("Нисък")); // Based on the number of reservations (1)
+            Assert.That(gym.Interest, Is.EqualTo("Low")); // Based on the number of reservations (1)
             Assert.That(gym.FreeSlots, Is.GreaterThan(0));
         }
 
@@ -103,7 +103,7 @@ namespace Booking.Tests
 
             dynamic gym = model.First();
             Assert.That(gym.Name, Is.EqualTo("Gym"));
-            Assert.That(gym.Interest, Is.EqualTo("Нисък")); // No reservations, low interest
+            Assert.That(gym.Interest, Is.EqualTo("Low")); // No reservations, low interest
             Assert.That(gym.FreeSlots, Is.GreaterThan(0));
         }
 
