@@ -28,9 +28,9 @@ namespace Booking.Controllers
                               from s in sGroup.DefaultIfEmpty()
                               select new
                               {
-                                  f.Id,
-                                  f.Name,
-                                  f.Address,
+                                  Id = f.Id,
+                                  Name = f.Name,
+                                  Address = f.Address,
                                   WorkStart = s != null ? s.Open : TimeOnly.MinValue,
                                   WorkEnd = s != null ? s.Close : TimeOnly.MinValue,
                                   ReservationsToday = _context.Reservations
@@ -55,11 +55,11 @@ namespace Booking.Controllers
                                       _ => "Висок"
                                   };
 
-                                  return new
+                                  return new FacilityViewModel
                                   {
-                                      f.Id,
-                                      f.Name,
-                                      f.Address,
+                                      Id = f.Id,
+                                      Name = f.Name,
+                                      Address = f.Address,
                                       Interest = interest,
                                       FreeSlots = freeMinutes
                                   };
