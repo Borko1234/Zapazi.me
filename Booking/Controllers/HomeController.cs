@@ -3,6 +3,7 @@ using Booking.Data;
 using Booking.Data.Entities;
 using Booking.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Controllers
 {
@@ -26,11 +27,14 @@ namespace Booking.Controllers
                               from fs in fsGroup.DefaultIfEmpty()
                               join s in _context.Schedules on fs.ScheduleId equals s.Id into sGroup
                               from s in sGroup.DefaultIfEmpty()
+                              join p in _context.Pricings on f.Id equals p.FacilityId into pGroup // Join with Pricings
+                              from p in pGroup.DefaultIfEmpty()
                               select new
                               {
                                   f.Id,
                                   f.Name,
                                   f.Address,
+                                  Price = p != null ? p.PricePerHour : 0, // Get Price from Pricing, default to 0 if null
                                   WorkStart = s != null ? s.Open : TimeOnly.MinValue,
                                   WorkEnd = s != null ? s.Close : TimeOnly.MinValue,
                                   ReservationsToday = _context.Reservations
@@ -61,7 +65,8 @@ namespace Booking.Controllers
                                       f.Name,
                                       f.Address,
                                       Interest = interest,
-                                      FreeSlots = freeMinutes
+                                      FreeSlots = freeMinutes,
+                                      f.Price
                                   };
                               })
                               .ToList();
