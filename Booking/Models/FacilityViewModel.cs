@@ -6,6 +6,7 @@
         public string Name { get; set; }
         public string Address { get; set; }
         public string Interest { get; set; }
-        public double FreeSlots { get; set; }
+        public int FreeSlots { get; set; }
+        public decimal Price { get; set; } 
     }
 }

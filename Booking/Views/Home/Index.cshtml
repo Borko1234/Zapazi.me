@@ -209,7 +209,8 @@
                     name: "@facility.Name",
                     address: "@facility.Address",
                     interest: "@facility.Interest",
-                    freeSlots: "@facility.FreeSlots"
+                    freeSlots: "@facility.FreeSlots",
+                    price: "@facility.Price"
                 },
                 </text>
             }
@@ -247,7 +248,8 @@
                                     <div class="mb-2" style="color: ${f.interest == '&#x421;&#x440;&#x435;&#x434;&#x435;&#x43D;' ? 'orange' : (f.interest == '&#x412;&#x438;&#x441;&#x43E;&#x43A;' ? 'red' : '#28a745')}; font-size: 1.2rem;">
                                         Interest: ${f.interest}
                                     </div>
-                                    <div style="color: #888;">${Math.floor(f.freeSlots/60)}:${String(f.freeSlots%60).padStart(2, '0')} свободни часове</div>
+                                    <div style="color: #888;">${Math.floor(f.freeSlots/60)} free appointments</div>
+                                    <div style="color: #888;">Price: ${f.price} BGN</div>
                                 </div>
                             </div>
                         `;

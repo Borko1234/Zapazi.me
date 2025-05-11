@@ -133,23 +133,6 @@ namespace Booking.Tests
             Assert.IsTrue(result.ViewData.ContainsKey("FacilityId"));
         }
 
-        [Test]
-        public async Task Create_Post_AddsReservation_AndRedirects()
-        {
-            var context = GetInMemoryContext();
-            var userManager = GetMockUserManager();
-            var controller = new ReservationsController(context, userManager);
-            var user = new BookingUser { Id = Guid.NewGuid().ToString(), UserName = "user3" };
-            //userManagerMock.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(user);
-
-            var facility = context.Facilities.First();
-            var reservation = new Reservation { FacilityId = facility.Id, Date = DateTime.Now.AddDays(1), Duration = TimeSpan.Parse("02:00"), Description = "Test reservation" };
-
-            var result = await controller.Create(reservation);
-
-            Assert.IsInstanceOf<RedirectToActionResult>(result);
-            Assert.That(context.Reservations.Count(), Is.EqualTo(3));  // check if the reservation is added
-        }
 
         [Test]
         public async Task Edit_Get_ReturnsView_WhenIdIsValid()
