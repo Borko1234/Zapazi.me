@@ -42,22 +42,35 @@ namespace Booking.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Facilities");
                 });
 
             modelBuilder.Entity("Booking.Data.Entities.FacilitySchedule", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("FacilityId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ScheduleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("FacilityId", "ScheduleId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ScheduleId");
+
+                    b.HasIndex("FacilityId", "ScheduleId")
+                        .IsUnique();
 
                     b.ToTable("FacilitySchedules");
                 });
@@ -71,8 +84,8 @@ namespace Booking.Data.Migrations
                     b.Property<Guid>("FacilityId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("PricePerHour")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("PricePerHour")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -83,11 +96,9 @@ namespace Booking.Data.Migrations
 
             modelBuilder.Entity("Booking.Data.Entities.Reservation", b =>
                 {
-                    b.Property<Guid>("FacilityId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -99,10 +110,16 @@ namespace Booking.Data.Migrations
                     b.Property<TimeSpan>("Duration")
                         .HasColumnType("time");
 
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("FacilityId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("FacilityId", "UserId");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacilityId");
 
                     b.HasIndex("UserId");
 
@@ -276,12 +293,10 @@ namespace Booking.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -318,12 +333,10 @@ namespace Booking.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -331,6 +344,17 @@ namespace Booking.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Booking.Data.Entities.Facility", b =>
+                {
+                    b.HasOne("Booking.Data.Identity.Users.BookingUser", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("Booking.Data.Entities.FacilitySchedule", b =>

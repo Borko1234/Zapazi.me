@@ -1,0 +1,62 @@
+﻿@model IEnumerable<Booking.Data.Entities.Schedule>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<div class="d-flex justify-content-start align-items-center mt-4 gap-3">
+    <!-- Create Button -->
+    <a href="@Url.Action("Create", "Schedules")" class="btn btn-primary d-flex justify-content-center align-items-center" style="height: 38px; padding: 0 20px; border-radius: 5px;">
+        <span>Create</span>
+    </a>
+
+    <!-- Search Bar -->
+    <form asp-action="Index" method="get" class="d-flex">
+        <input type="text" name="searchTerm" class="form-control" placeholder="Enter Schedule..." style="width: 300px;" />
+        <button type="submit" class="btn btn-secondary ms-2">Search</button>
+    </form>
+</div>
+
+<table class="table mt-4">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Open)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Close)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <!-- Make Open Time Clickable -->
+                <a href="@Url.Action("Details", "Schedules", new { id = item.Id })" class="link-style">
+                    @Html.DisplayFor(modelItem => item.Open)
+                </a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Close)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@section Styles {
+    <style>
+        .link-style {
+            color: black;
+            text-decoration: none;
+        }
+
+        .link-style:hover {
+            color: blue;
+        }
+    </style>
+}

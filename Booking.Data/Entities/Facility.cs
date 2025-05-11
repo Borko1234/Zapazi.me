@@ -1,4 +1,5 @@
 ﻿using Booking.Data.Entities.Abstractions;
+using Booking.Data.Identity.Users;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,6 +19,9 @@ namespace Booking.Data.Entities
         public string Mobile { get; set; }
         [Required]
         public string Address { get; set; }
+
+        public string OwnerId { get; set; }
+        public BookingUser? Owner { get; set; }
 
         public virtual ICollection<FacilitySchedule>? FacilitySchedules { get; set; }
         public virtual ICollection<Pricing>? Pricings { get; set; }

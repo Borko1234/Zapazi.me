@@ -15,6 +15,6 @@ namespace Booking.Data.Entities
         public Guid FacilityId { get; set; }
         public Facility? Facility { get; set; }
 
-        public decimal PricePerHour { get; set; }
+        public double PricePerHour { get; set; }
     }
 }
