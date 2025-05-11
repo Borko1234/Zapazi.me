@@ -19,7 +19,6 @@ namespace Booking.Controllers
             _context = context;
         }
 
-        // GET: FacilitySchedules
         public async Task<IActionResult> Index(string searchTerm)
         {
             var facilitySchedules = from fs in _context.FacilitySchedules
@@ -37,8 +36,6 @@ namespace Booking.Controllers
 
             return View(await facilitySchedules.ToListAsync());
         }
-
-        // GET: FacilitySchedules/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -58,7 +55,6 @@ namespace Booking.Controllers
             return View(facilitySchedule);
         }
 
-        // GET: FacilitySchedules/Create
         public IActionResult Create()
         {
             ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name");

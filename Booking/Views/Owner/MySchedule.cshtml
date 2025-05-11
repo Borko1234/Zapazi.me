@@ -1,0 +1,59 @@
+@using Booking.Data.Entities
+@model List<Reservation>
+
+@{
+    ViewData["Title"] = "Facility Schedule";
+    var facilityName = ViewBag.FacilityName;
+    var selectedDate = (DateTime)ViewBag.SelectedDate;
+    var openHour = 8;
+    var closeHour = 20;
+}
+
+<div class="container mt-4">
+    <h2>@facilityName Schedule</h2>
+    <p class="text-muted">@selectedDate.ToString("dddd, MMMM dd, yyyy")</p>
+
+    <div class="mb-4">
+        <form method="get" class="form-inline">
+            <div class="form-group mr-2">
+                <label for="facilityId" class="mr-2">Select Facility:</label>
+                <select name="facilityId" class="form-control mr-2" required>
+                    @foreach (var facility in (IEnumerable<Booking.Data.Entities.Facility>)ViewBag.Facilities)
+                    {
+                        <option value="@facility.Id" selected="@(facility.Id == (Guid)ViewBag.FacilityId)">@facility.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group mr-2">
+                <label for="date" class="mr-2">Select Date:</label>
+                <input type="date" name="date" value="@selectedDate.ToString("yyyy-MM-dd")"
+                       class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Show</button>
+        </form>
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Description</th>
+                <th>User</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var reservation in Model)
+            {
+                <tr>
+                    <td>@reservation.Date.ToString("HH:mm")</td>
+                    <td>@reservation.Description</td>
+                    <td>@reservation.User?.UserName</td>
+                    <td>@reservation.Date.ToString("HH:mm")</td>
+                    <td>@reservation.Date.AddMinutes(reservation.Duration.TotalMinutes).ToString("HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
