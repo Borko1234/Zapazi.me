@@ -107,6 +107,10 @@ namespace Booking.Controllers
                 reservation.Id = Guid.NewGuid();
                 var user = await _userManager.GetUserAsync(User);
                 reservation.UserId = user.Id;
+                if (reservation.Date == DateTime.MinValue)
+                {
+                    reservation.Date = DateTime.Now;
+                }
 
                 _context.Add(reservation);
                 await _context.SaveChangesAsync();

@@ -50,9 +50,9 @@ namespace Booking.Controllers
                                   var reservationCount = f.ReservationsToday.Count;
                                   var interest = reservationCount switch
                                   {
-                                      <= 2 => "Нисък",
-                                      <= 5 => "Среден",
-                                      _ => "Висок"
+                                      <= 2 => "Low",
+                                      <= 5 => "Midium",
+                                      _ => "High"
                                   };
 
                                   return new FacilityViewModel
