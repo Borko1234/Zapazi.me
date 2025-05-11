@@ -1,4 +1,7 @@
 ﻿@model Booking.Data.Entities.Reservation
+@using Microsoft.AspNetCore.Identity
+@using Booking.Data.Identity.Users
+@inject UserManager<BookingUser> UserManager
 
 @{
     ViewData["Title"] = "Create";
@@ -33,10 +36,21 @@
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="d-flex justify-content-start gap-3 mt-4">
-                <input type="submit" value="Create" class="btn btn-primary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;" />
-                <a asp-action="Index" class="btn btn-secondary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">Back to List</a>
-            </div>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="d-flex justify-content-start gap-3 mt-4">
+                    <input type="submit" value="Create" class="btn btn-primary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;" />
+                    <a asp-action="Index" class="btn btn-secondary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">Back to List</a>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex justify-content-start gap-3 mt-4">
+                    <input type="submit" value="Create" class="btn btn-primary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;" />
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-md" style="width: 150px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px;">Back to Home</a>
+                </div>
+            }
         </form>
     </div>
 </div>

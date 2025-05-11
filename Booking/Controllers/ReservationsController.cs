@@ -62,7 +62,6 @@ namespace Booking.Controllers
             return View(reservation);
         }
 
-        // GET: Reservations/Create
         public IActionResult Create(Guid? facilityId)
         {
             ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", facilityId);
@@ -94,13 +93,20 @@ namespace Booking.Controllers
 
                 _context.Add(reservation);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                if (User.IsInRole("Admin"))
+                {
+                    return RedirectToAction("Details", new { id = reservation.Id });
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Home");
+                }
             }
             ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", reservation.FacilityId);
             return View(reservation);
         }
 
-        // GET: Reservations/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
