@@ -56,13 +56,8 @@ namespace Booking.Controllers
         }
 
         // GET: FacilitySchedules/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            if (!(User?.Identity.IsAuthenticated ?? false))
-            {
-                return RedirectToAction("Index");
-            }
-
             ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name");
             ViewData["ScheduleId"] = new SelectList(
             _context.Schedules
@@ -83,11 +78,6 @@ namespace Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("FacilityId,ScheduleId")] FacilitySchedule facilitySchedule)
         {
-            if (!(User?.Identity.IsAuthenticated ?? false))
-            {
-                return RedirectToAction("Index");
-            }
-
             if (ModelState.IsValid)
             {
                 _context.Add(facilitySchedule);
@@ -110,11 +100,6 @@ namespace Booking.Controllers
         // GET: FacilitySchedules/Edit/5
         public async Task<IActionResult> Edit(Guid? Id)
         {
-            if (!(User?.Identity.IsAuthenticated ?? false))
-            {
-                return RedirectToAction("Index");
-            }
-
             if (Id == null)
             {
                 return NotFound();
@@ -145,11 +130,6 @@ namespace Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid Id, [Bind("Id, FacilityId,ScheduleId")] FacilitySchedule facilitySchedule)
         {
-            if (!(User?.Identity.IsAuthenticated ?? false))
-            {
-                return RedirectToAction("Index");
-            }
-
             if (Id != facilitySchedule.Id)
             {
                 return NotFound();
@@ -191,11 +171,6 @@ namespace Booking.Controllers
         // GET: FacilitySchedules/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (!(User?.Identity.IsAuthenticated ?? false))
-            {
-                return RedirectToAction("Index");
-            }
-
             if (id == null)
             {
                 return NotFound();
@@ -218,11 +193,6 @@ namespace Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (!(User?.Identity.IsAuthenticated ?? false))
-            {
-                return RedirectToAction("Index");
-            }
-
             var facilitySchedule = await _context.FacilitySchedules.FindAsync(id);
             if (facilitySchedule != null)
             {
