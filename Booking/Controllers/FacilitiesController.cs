@@ -16,6 +16,7 @@ namespace Booking.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BookingUser> _userManager;
+        private readonly SignInManager<BookingUser> _signInManager;
 
         public FacilitiesController(ApplicationDbContext context, UserManager<BookingUser> userManager)
         {
@@ -83,7 +84,15 @@ namespace Booking.Controllers
         // GET: Facilities/Create
         public IActionResult Create()
         {
-            return View();
+            if(User?.Identity.IsAuthenticated ?? false)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+                
         }
 
         // POST: Facilities/Create
@@ -93,7 +102,13 @@ namespace Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Mobile,Address,Id")] Facility facility)
         {
+            if (!(User?.Identity.IsAuthenticated ?? false))
+            {
+                return RedirectToAction("Index");
+            }
+
             ModelState.Remove("OwnerId");
+            
 
             if (ModelState.IsValid)
             {
@@ -111,6 +126,11 @@ namespace Booking.Controllers
         // GET: Facilities/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
+            if (!(User?.Identity.IsAuthenticated ?? false))
+            {
+                return RedirectToAction("Index");
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -121,7 +141,11 @@ namespace Booking.Controllers
             {
                 return NotFound();
             }
-            return View(facility);
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Id == facility.OwnerId)
+                return View(facility);
+            else
+                return RedirectToAction("Index");
         }
 
         // POST: Facilities/Edit/5
@@ -129,8 +153,13 @@ namespace Booking.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Mobile,Address,Id")] Facility facility)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Mobile,Address,Id,OwnerId")] Facility facility)
         {
+            if (!(User?.Identity.IsAuthenticated ?? false))
+            {
+                return RedirectToAction("Index");
+            }
+
             if (id != facility.Id)
             {
                 return NotFound();
@@ -143,10 +172,13 @@ namespace Booking.Controllers
                 try
                 {
                     var user = await _userManager.GetUserAsync(User);
-                    facility.OwnerId = user.Id;
+                    if(facility.OwnerId == user.Id)
+                    {
+                        _context.Update(facility);
+                        await _context.SaveChangesAsync();
+                    }
 
-                    _context.Update(facility);
-                    await _context.SaveChangesAsync();
+                    
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -167,6 +199,11 @@ namespace Booking.Controllers
         // GET: Facilities/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
+            if (!(User?.Identity.IsAuthenticated ?? false))
+            {
+                return RedirectToAction("Index");
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -179,7 +216,11 @@ namespace Booking.Controllers
                 return NotFound();
             }
 
-            return View(facility);
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Id == facility.OwnerId)
+                return View(facility);
+            else
+                return RedirectToAction("Index");
         }
 
         // POST: Facilities/Delete/5
@@ -187,11 +228,21 @@ namespace Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(Guid id)
         {
+            if (!(User?.Identity.IsAuthenticated ?? false))
+            {
+                return RedirectToAction("Index");
+            }
+
             var facility = await _context.Facilities.FindAsync(id);
             if (facility != null)
             {
-                _context.Facilities.Remove(facility);
-                await _context.SaveChangesAsync();
+                var user = await _userManager.GetUserAsync(User);
+                if(user.Id == facility.OwnerId)
+                {
+                    _context.Facilities.Remove(facility);
+                    await _context.SaveChangesAsync();
+                }
+                
             }
             return RedirectToAction(nameof(Index));
         }

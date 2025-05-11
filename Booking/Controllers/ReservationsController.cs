@@ -27,6 +27,11 @@ namespace Booking.Controllers
         // GET: Reservations
         public async Task<IActionResult> Index(string searchTerm)
         {
+            if (!(User?.Identity.IsAuthenticated ?? false))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             var reservations = _context.Reservations
                 .Include(r => r.Facility)
                 .Include(r => r.User)
@@ -45,6 +50,11 @@ namespace Booking.Controllers
         // GET: Reservations/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
+            if (!(User?.Identity.IsAuthenticated ?? false))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -65,6 +75,11 @@ namespace Booking.Controllers
         // GET: Reservations/Create
         public IActionResult Create(Guid? facilityId)
         {
+            if (!(User?.Identity.IsAuthenticated ?? false))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             ViewData["FacilityId"] = new SelectList(_context.Facilities, "Id", "Name", facilityId);
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
             var reservation = new Reservation();
@@ -80,6 +95,11 @@ namespace Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("FacilityId,Date,Duration,Description")] Reservation reservation)
         {
+            if (!(User?.Identity.IsAuthenticated ?? false))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             ModelState.Remove("UserId");
 
             if (ModelState.IsValid)
@@ -99,6 +119,11 @@ namespace Booking.Controllers
         // GET: Reservations/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
+            if (!(User?.Identity.IsAuthenticated ?? false))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -119,6 +144,11 @@ namespace Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,FacilityId,Date,Duration,Description")] Reservation reservation)
         {
+            if (!(User?.Identity.IsAuthenticated ?? false))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             ModelState.Remove("UserId");
 
             if (id != reservation.Id)
@@ -157,6 +187,11 @@ namespace Booking.Controllers
         // GET: Reservations/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
+            if (!(User?.Identity.IsAuthenticated ?? false))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -179,6 +214,11 @@ namespace Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
+            if (!(User?.Identity.IsAuthenticated ?? false))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             var reservation = await _context.Reservations.FindAsync(id);
             if (reservation != null)
             {
